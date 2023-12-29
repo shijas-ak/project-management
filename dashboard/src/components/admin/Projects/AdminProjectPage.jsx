@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const AdminProjectPage = () => {
   const [projects, setProjects] = useState([]);
 
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus] = useState("");
 
   const navigate = useNavigate();
 
@@ -41,8 +41,7 @@ const AdminProjectPage = () => {
 
   
   const TaskCreationPage = (projectId) => {
-    console.log(projectId);
-    navigate(`/create-task/${projectId}`);
+    navigate(`/admin-create-task/${projectId}`);
   };
 
   return (

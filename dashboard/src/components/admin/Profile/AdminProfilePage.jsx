@@ -3,7 +3,7 @@ import { callApi,uploadApi } from "../../../services/API";
 import "./AdminProfilePage.css";
 
 const AdminProfilePage = () => {
-  const [userId, setUserId] = useState("");
+  const [userId] = useState("");
   const [userProfile, setUserProfile] = useState({});
   const [editMode, setEditMode] = useState(false);
 
@@ -35,13 +35,13 @@ const AdminProfilePage = () => {
   const handleSaveClick = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await uploadApi(
+      const response = await callApi(
         "patch",
         `users-profile/${userId}`,
         userProfile,
         token
       );
-      console.log(response.message);
+      console.log("hehe",response);
 
       setEditMode(false);
     } catch (error) {

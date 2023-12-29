@@ -1,13 +1,11 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const Project = require("../models/project");
 
 const taskController = {
   createTask: async (req, res) => {
     try {
       const projectId = req.params.Id;
-      console.log("project id is",projectId);
       const { title, description, startDate, endDate } = req.body;
-      console.log(req.body);
 
       if (!title) {
         return res.status(400).json({ message: "Task title is required" });
@@ -44,7 +42,7 @@ const taskController = {
       }
 
       const tasks = project.tasks;
-      res.status(200).json({ tasks ,projectId});
+      res.status(200).json({ tasks, projectId });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
@@ -55,19 +53,32 @@ const taskController = {
     try {
       const userId = req.params.id;
 
-      const projects = await Project.find({ "tasks.assignees": new mongoose.Types.ObjectId(userId) });
+      const projects = await Project.find({
+        "tasks.assignees": new mongoose.Types.ObjectId(userId),
+      });
 
       const userTasks = projects.reduce((acc, project) => {
-        const tasksForUser = project.tasks.filter(task => task.assignees.some(assignee => assignee.equals(new mongoose.Types.ObjectId(userId))));
+        const tasksForUser = project.tasks.filter((task) =>
+          task.assignees.some((assignee) =>
+            assignee.equals(new mongoose.Types.ObjectId(userId))
+          )
+        );
         return [...acc, ...tasksForUser];
       }, []);
 
       if (!userTasks || userTasks.length === 0) {
-        return res.status(404).json({ message: "Tasks not found for the user" });
+        return res
+          .status(404)
+          .json({ message: "Tasks not found for the user" });
       }
 
-      res.status(200).json({ userId,projectId: projects.map(project => project._id),tasks: userTasks });
-
+      res
+        .status(200)
+        .json({
+          userId,
+          projectId: projects.map((project) => project._id),
+          tasks: userTasks,
+        });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
@@ -105,9 +116,12 @@ const taskController = {
 
       const { title, description, startDate, endDate, status } = req.body;
 
-      console.log("req.body",req.body);
+      console.log("req.body", req.body);
 
-      const project = await Project.findOne({  "tasks.assignees": userId,"tasks._id": taskId  });
+      const project = await Project.findOne({
+        "tasks.assignees": userId,
+        "tasks._id": taskId,
+      });
 
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
@@ -145,8 +159,7 @@ const taskController = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
-  
-  
+
   deleteTask: async (req, res) => {
     try {
       const projectId = req.params.Id;

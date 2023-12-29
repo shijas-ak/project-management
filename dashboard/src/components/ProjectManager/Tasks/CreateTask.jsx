@@ -29,7 +29,7 @@ const CreateTask = () => {
     }
   };
 
-  const handleAddTask = async () => {
+  const handleAddTask = async (userId) => {
     try {
       const token = localStorage.getItem("token");
       await callApi(
@@ -38,11 +38,11 @@ const CreateTask = () => {
         { ...taskFormData },
         token
       );
+      alert("task added successfully")
       setSuccessMessage("Task created successfully");
       setErrorMessage("");
 
       fetchProjects();
-      navigate("/pm-dashboard");
     } catch (error) {
       console.error("Error adding task:", error);
       setErrorMessage("Error adding task. Please try again.");

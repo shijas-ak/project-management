@@ -41,8 +41,7 @@ const PmProjectPage = () => {
 
   
   const TaskCreationPage = (projectId) => {
-    console.log(projectId);
-    navigate(`/create-task/${projectId}`);
+    navigate(`/pm-create-task/${projectId}`);
   };
 
   return (

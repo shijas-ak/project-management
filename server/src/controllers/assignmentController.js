@@ -195,10 +195,12 @@ const assignmentController = {
       const project = await Project.findOne({ "tasks._id": taskId });
 
       if (!project) {
-        return res.status(404).json({ message: "Task not found in any project" });
+        return res
+          .status(404)
+          .json({ message: "Task not found in any project" });
       }
 
-      const task = project.tasks.find(task => task._id.toString() === taskId);
+      const task = project.tasks.find((task) => task._id.toString() === taskId);
 
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
@@ -207,7 +209,7 @@ const assignmentController = {
       const assignedUsers = await User.find({ _id: { $in: task.assignees } });
 
       res.status(200).json({
-        task, 
+        task,
         assignedUsers,
       });
     } catch (error) {

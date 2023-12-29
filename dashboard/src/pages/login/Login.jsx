@@ -42,6 +42,7 @@ export default function Home() {
         });
       }
     } catch (error) {
+      alert(error.message)
       console.error(error.message);
       setError("password", { type: "manual", message: error.message });
     } finally {

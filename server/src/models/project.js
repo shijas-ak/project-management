@@ -21,9 +21,9 @@ const projectSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  status:{
+  status: {
     type: String,
-    default:"pending"
+    default: "Pending",
   },
 
   tasks: [

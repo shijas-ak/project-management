@@ -44,17 +44,17 @@ const authController = {
         role,
         isApproved,
         others: {
-          about: '',
-          company: '',
-          job: '',
-          country: '',
-          address: '',
-          phone: '',
-          twitter: '',
-          facebook: '',
-          instagram: '',
-          linkedin: '',
-          ...others, 
+          about: "about",
+          company: "company",
+          job: "job",
+          country: "country",
+          address: "address",
+          phone: "phone",
+          twitter: "twitter",
+          facebook: "facebook",
+          instagram: "instagram",
+          linkedin: "linkedin",
+          ...others,
         },
       });
 
@@ -69,6 +69,7 @@ const authController = {
       res.status(200).json({
         message: "User registered successfully",
         status: 200,
+        newUser,
       });
     } catch (error) {
       console.error(error);
@@ -111,7 +112,7 @@ const authController = {
         username: user.username,
         email: user.email,
         role: user.role,
-        isApproved:user.isApproved,
+        isApproved: user.isApproved,
       });
     } catch (error) {
       console.error(error);

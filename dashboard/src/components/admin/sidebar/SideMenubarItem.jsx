@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import style from "./sidebar.module.css"
 import { Link } from "react-router-dom";
 
 export default function SideMenubarItem({ item }) {
-    const [open, setOpen] = useState(false);
+    const [open] = useState(false);
 
 
     

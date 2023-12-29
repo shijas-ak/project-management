@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { callApi, uploadApi } from "../../../services/API";
+import { callApi } from "../../../services/API";
 import "./ProfilePage.css";
 
 const Profile = () => {

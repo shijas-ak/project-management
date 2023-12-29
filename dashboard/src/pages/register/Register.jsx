@@ -28,13 +28,14 @@ export default function Register() {
       const response = await callApi("post", "register", dataToSend, "");
 
       if (response.status === 200 || response.status === 201) {
-        console.log("Registration successful",response);
+        alert("registration is successful, Now please login with your username and password")
         navigate("/");
       } else {
         console.log("Registration failed:", response);
       }
     } catch (error) {
-      console.log(error);
+      console.log("error is",error)
+      alert(error)
       console.error("Registration error", error);
     } finally {
       setIsMutating(false);

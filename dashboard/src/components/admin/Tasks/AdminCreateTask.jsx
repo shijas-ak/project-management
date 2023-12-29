@@ -1,9 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { callApi } from "../../../services/API";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateTask = () => {
+const AdminCreateTask = () => {
   const [projects, setProjects] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -38,11 +38,12 @@ const CreateTask = () => {
         { ...taskFormData },
         token
       );
-      setSuccessMessage("Task created successfully");
+      alert("Task created successfully");
+      window.location.reload()
       setErrorMessage("");
 
       fetchProjects();
-      navigate("/pm-dashboard");
+      
     } catch (error) {
       console.error("Error adding task:", error);
       setErrorMessage("Error adding task. Please try again.");
@@ -107,4 +108,4 @@ const CreateTask = () => {
   );
 };
 
-export default CreateTask;
+export default AdminCreateTask;

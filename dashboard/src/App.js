@@ -13,6 +13,7 @@ import ResetPassword from "./pages/password-reset/ResetPassword.jsx";
 import CreateProject from "./pages/projects/CreateProject.jsx";
 import PmProjectPage from "./components/ProjectManager/Projects/PmProjectPage.jsx";
 import CreateTask from "./components/ProjectManager/Tasks/CreateTask.jsx";
+import AdminCreateTask from "./components/admin/Tasks/AdminCreateTask.jsx";
 import PmTasksPage from "./components/ProjectManager/Tasks/PmTasksPage.jsx";
 import ProfilePage from "./components/ProjectManager/Profile/ProfilePage.jsx";
 import UserProfile from "./components/User/profile/UserProfile.jsx";
@@ -25,6 +26,7 @@ import AdminTasksPage from "./components/admin/Tasks/AdminTasksPage.jsx";
 import AdminProfilePage from "./components/admin/Profile/AdminProfilePage.jsx";
 import UserApproval from "./components/admin/approval/UserApproval.jsx";
 import { UserIdProvider } from "./services/UserIdProvider.jsx";
+import AdminCreateProject from "./components/admin/Projects/AdminCreateProject.jsx";
 
 function App() {
   return (
@@ -39,9 +41,11 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route element={<Layout />}>
           <Route path="/pm-dashboard/:userId" element={<PmDashboard />} />
-          <Route path="/create-project" element={<CreateProject />} />
+          <Route path="/create-project/:userId" element={<CreateProject />} />
+          <Route path="/admin-create-project/:userId" element={<AdminCreateProject />} />
           <Route path="/pm-projects/:userId" element={<PmProjectPage />} />
-          <Route path="/create-task/:projectId" element={<CreateTask />} />
+          <Route path="/pm-create-task/:projectId" element={<CreateTask />} />
+          <Route path="/admin-create-task/:projectId" element={<AdminCreateTask />} />
           <Route path="/pm-tasks/:userId" element={<PmTasksPage />} />
           <Route path="/pm-profile/:userId" element={<ProfilePage />} />
         </Route>

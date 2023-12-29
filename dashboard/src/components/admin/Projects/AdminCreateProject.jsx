@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate,useParams } from "react-router-dom";
-import { callApi } from "../../services/API";
+import { callApi } from "../../../services/API";
 
-const CreateProject = () => {
+const AdminCreateProject = () => {
   const {userId} = useParams()
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ const CreateProject = () => {
       const resp =await callApi("post", "projects", projectData, token);
       console.log("new project",resp);
 
-      navigate(`/pm-dashboard/${userId}`);
+      navigate(`/admin-dashboard/${userId}`);
     } catch (error) {
       console.error("Error creating project:", error);
     }
@@ -93,4 +93,4 @@ const CreateProject = () => {
   );
 };
 
-export default CreateProject;
+export default AdminCreateProject;
