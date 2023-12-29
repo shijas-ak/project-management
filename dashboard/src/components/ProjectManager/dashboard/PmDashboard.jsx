@@ -1,0 +1,180 @@
+import {useNavigate } from "react-router-dom";
+import 'chart.js/auto';
+
+import PmDashboardCard from "./PmDashboardCard";
+import { Bar } from "react-chartjs-2";
+import style from "./page.module.css";
+import { callApi } from "../../../services/API";
+import { useEffect, useState } from "react";
+
+export default function PmDashboard() {
+  const navigate = useNavigate();
+  const [projectStats, setProjectStats] = useState({
+    totalProjects: 0,
+    finishedProjects: 0,
+    pendingProjects: 0,
+  });
+  const [approvedUsersCount, setApprovedUsersCount] = useState(0);
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    const fetchProjectStats = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const projects = await callApi("get", "projects", "", token);
+
+        const totalProjects = projects.projects.length;
+        const finishedProjects = projects.projects.filter(
+          (project) => project.status === "Completed"
+        ).length;
+        const pendingProjects = projects.projects.filter(
+          (project) => project.status === "Pending"
+        ).length;
+
+        setProjectStats({
+          totalProjects,
+          finishedProjects,
+          pendingProjects,
+        });
+        setProjects(projects.projects);
+      } catch (error) {
+        console.error("Error fetching project stats:", error);
+      }
+    };
+
+    const fetchApprovedUsersCount = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const approvedUsers = await callApi("get", "users/approved", "", token);
+
+        setApprovedUsersCount(approvedUsers.approvedUsers.length);
+      } catch (error) {
+        console.error("Error fetching approved users count:", error);
+      }
+    };
+
+    fetchProjectStats();
+    fetchApprovedUsersCount();
+  }, []);
+
+  const handleCreateProject = () => {
+    navigate("/create-project");
+  };
+
+  const chartData = {
+    labels: ["Completed Projects", "Pending Projects"],
+    datasets: [
+      {
+        label: "Project Growth",
+        data: [projectStats.finishedProjects, projectStats.pendingProjects],
+        backgroundColor: ["green", "lightblue"],
+      },
+    ],
+  };
+
+  const chartOptions = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+      x:{
+        type:'category'
+      }
+    },
+  };
+
+  return (
+    <div className={style.dashboard_outer}>
+      <div className={style.dashboard_wrapper}>
+        <div className={style.dashboard_top}>
+          <div className={style.dash_top_left}>
+            <h6> Welcome PM</h6>
+            <p className="bread-crumps">
+              <span className="current-page">Dashboard</span>
+            </p>
+          </div>
+        </div>
+        <div className={style.req_wrapper}>
+          <div className={style.request}>
+            <PmDashboardCard
+              title={"Total Projects"}
+              value={projectStats.totalProjects}
+              color="blue"
+              image="/images/link-square.png"
+            />
+            <PmDashboardCard
+              title={"Finished Projects"}
+              value={projectStats.finishedProjects}
+              color="green"
+              image="/images/key.png"
+            />
+            <PmDashboardCard
+              title={"Pending Projects"}
+              value={projectStats.pendingProjects}
+              color="lightblue"
+              image="/images/valett.png"
+            />
+          </div>
+          <div className={style.request}>
+            <div
+              className={`${style.req_card} ${style.light_violet} ${style.shedule}`}
+            >
+              <Bar data={chartData} options={chartOptions} />
+
+              <div className={style.request_inside}>
+                <div className={style.members_num}>
+                  <h4>{approvedUsersCount}</h4>
+                  <h5>Developers</h5>
+                </div>
+                <p className={style.req_content}>
+                  Create project to add developers.
+                </p>
+              </div>
+              <div className={style.req_button_block}>
+                <button
+                  type="button"
+                  className="main_button"
+                  onClick={handleCreateProject}
+                >
+                  Create Project
+                </button>
+              </div>
+             
+            </div>
+          </div>
+        </div>
+        <div className={`${style.dash_notification} card_block mt-15`}>
+          <div className="card_top">
+            <div className="section_title">
+              <h2>Ongoing Projects</h2>
+            </div>
+            <div className="card_top_right"></div>
+          </div>
+          <table className={style.ongoing_projects_table}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects
+                .filter((project) => project.status === "InProgress")
+                .map((ongoingProject) => (
+                  <tr key={ongoingProject._id}>
+                    <td>{ongoingProject.name}</td>
+                    <td>
+                      <button className={style.yellowButton}>
+                        {ongoingProject.status}
+                      </button>
+                    </td>{" "}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

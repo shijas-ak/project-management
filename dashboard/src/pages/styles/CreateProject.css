@@ -1,0 +1,111 @@
+/* .form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #333;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-container label {
+  font-weight: bold;
+  color: #555;
+}
+
+.form-container input,
+.form-container textarea,
+.form-container select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form-container input:focus,
+.form-container textarea:focus,
+.form-container select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.form-container button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 12px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+  background-color: #2980b9;
+} */
+
+
+/* styles for CreateProject component */
+.create-project-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.create-project-container h2 {
+  text-align: center;
+  color: #333;
+}
+
+.create-project-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.create-project-container label {
+  font-weight: bold;
+  color: #555;
+}
+
+.create-project-container input,
+.create-project-container textarea,
+.create-project-container select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.create-project-container input:focus,
+.create-project-container textarea:focus,
+.create-project-container select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.create-project-container button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 12px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.create-project-container button:hover {
+  background-color: #2980b9;
+}

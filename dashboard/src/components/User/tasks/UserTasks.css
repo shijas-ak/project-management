@@ -1,0 +1,21 @@
+.user-tasks-container {
+    margin: 20px;
+  }
+  
+  .tasks-list {
+    margin-top: 10px;
+  }
+  
+  .task-item {
+    list-style-type: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .task-actions button {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  

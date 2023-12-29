@@ -1,0 +1,41 @@
+.menu_btn{
+    cursor:pointer;
+}
+.mobile_topbar_menu span{
+    font-size: 18px;
+}
+.mobile_topbar_menu {
+    display: none;
+}
+.mobile_menu_btn{
+    margin: 0 5px; 
+    cursor: pointer;
+    display: none;
+}
+.mobile_menu_btn span{
+    font-size: 16px;
+    color: #afafaf;
+}
+@media(max-width:1200px){
+    .menu_btn{
+        display: none;
+    } 
+    .mobile_menu_btn{
+        display: block;
+        margin-top: 10px;
+    }
+}
+@media(max-width:991px){
+    .mobile_topbar_menu {
+        display: block;
+    }
+    .top_bar_right_list{
+        display: none;
+    }
+    
+}
+@media(max-width:768px){
+    .mobile_topbar_menu span {
+        font-size: 16px;
+    }
+}

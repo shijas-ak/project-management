@@ -1,0 +1,60 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+.project-list {
+  width: 30%;
+}
+
+.project-list div {
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.project-list div:hover {
+  background-color: #f0f0f0;
+}
+
+.tasks-list {
+  width: 65%;
+}
+
+.tasks-list h3 {
+  margin-bottom: 10px;
+}
+
+.tasks-list div {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.checkbox-container input {
+  margin-right: 5px;
+}
+
+button {
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
