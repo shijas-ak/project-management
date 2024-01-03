@@ -22,16 +22,18 @@ export default function Home() {
       const response = await callApi("post", "login", data, "");
 
       if (response.status === 200) {
-        console.log("Login successful");
         localStorage.setItem("token", response.token);
 
         const { role, userId } = response;
 
         if (role === "PM") {
+          alert("Login successful")
           navigate(`/pm-dashboard/${userId}`);
         } else if (role === "admin") {
+          alert("Login successful")
           navigate(`/admin-dashboard/${userId}`);
         } else {
+          alert("Login successful")
           navigate(`/user-dashboard/${userId}`);
         }
       } else {

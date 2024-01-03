@@ -131,50 +131,6 @@ const assignmentController = {
     }
   },
 
-  assignUserToTask: async (req, res) => {
-    try {
-      const taskId = req.params.taskId;
-      const { userId } = req.body;
-
-      const project = await Project.findOne({ "tasks._id": taskId });
-
-      if (!project) {
-        return res.status(404).json({ message: "Task not found" });
-      }
-
-      const task = project.tasks.id(taskId);
-
-      if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-      }
-
-      if (!userId || userId.length === 0) {
-        return res.status(400).json({ message: "User ID is required" });
-      }
-
-      const userIdString = userId.toString();
-
-      if (task.assignees.includes(userIdString)) {
-        return res
-          .status(400)
-          .json({ message: "User is already assigned to the task" });
-      }
-
-      task.assignees.push(userIdString);
-
-      await project.save();
-
-      res.status(200).json({
-        message: "User assigned to task successfully",
-        taskId,
-        task: project.tasks.id(taskId),
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  },
-
   getAllRegisteredUsers: async (req, res) => {
     try {
       const registeredUsers = await User.find({ role: { $ne: "admin" } });
@@ -209,7 +165,6 @@ const assignmentController = {
       const assignedUsers = await User.find({ _id: { $in: task.assignees } });
 
       res.status(200).json({
-        task,
         assignedUsers,
       });
     } catch (error) {
@@ -217,12 +172,50 @@ const assignmentController = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
-
-  unassignUserFromTask: async (req, res) => {
+  assignUserToTask: async (req, res) => {
     try {
       const projectId = req.params.Id;
       const taskId = req.params.taskId;
-      const { userId } = req.body;
+      const { assignees } = req.body;
+
+
+      const project = await Project.findById(projectId);
+
+      if (!project) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+
+      const task = project.tasks.id(taskId);
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      assignees.forEach((userId) => {
+        if (!task.assignees.includes(userId)) {
+          task.assignees.push(userId);
+        } else {
+          
+          console.warn(`User ${userId} is already assigned to the task.`);
+        }
+      });
+      await project.save();
+
+      res.status(200).json({
+        message: "User assigned to task successfully",
+        task,
+        taskId,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
+  unassignUsersFromTask: async (req, res) => {
+    try {
+      const projectId = req.params.Id;
+      const taskId = req.params.taskId;
+      const { assignees } = req.body;
 
       const project = await Project.findById(projectId);
 
@@ -236,17 +229,20 @@ const assignmentController = {
         return res.status(404).json({ message: "Task not found" });
       }
 
-      const userIndex = task.assignees.indexOf(userId);
+      assignees.forEach((userId) => {
+        const userIndex = task.assignees.indexOf(userId);
 
-      if (userIndex === -1) {
-        return res.status(404).json({ message: "User not assigned to task" });
-      }
+        if (userIndex !== -1) {
+          task.assignees.splice(userIndex, 1);
+        } else {
+          console.warn(`User ${userId} is not assigned to the task.`); 
+        }
+      });
 
-      task.assignees.splice(userIndex, 1);
       await project.save();
 
       res.status(200).json({
-        message: "User unassigned from task successfully",
+        message: "Users unassigned from task successfully",
         task,
       });
     } catch (error) {

@@ -17,7 +17,6 @@ const CreateTask = () => {
   });
 
   const { projectId } = useParams();
-  const navigate = useNavigate();
 
   const fetchProjects = async () => {
     try {
@@ -29,7 +28,7 @@ const CreateTask = () => {
     }
   };
 
-  const handleAddTask = async (userId) => {
+  const handleAddTask = async () => {
     try {
       const token = localStorage.getItem("token");
       await callApi(
@@ -38,8 +37,8 @@ const CreateTask = () => {
         { ...taskFormData },
         token
       );
-      alert("task added successfully")
-      setSuccessMessage("Task created successfully");
+      alert("task created successfully")
+      window.location.reload()
       setErrorMessage("");
 
       fetchProjects();

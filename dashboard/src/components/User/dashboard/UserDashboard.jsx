@@ -135,7 +135,8 @@ export default function UserDashboard() {
               </tr>
             </thead>
             <tbody>
-              {ongoingTasks.map((ongoingTask) => (
+              {ongoingTasks.length> 0 ?
+              ongoingTasks.map((ongoingTask) => (
                 <tr key={ongoingTask._id}>
                   <td>{ongoingTask.title}</td>
                   <td>
@@ -144,7 +145,9 @@ export default function UserDashboard() {
                     </button>
                   </td>{" "}
                 </tr>
-              ))}
+              )):(
+                <div><h2>No Ongoing Tasks</h2></div>
+              )}
             </tbody>
           </table>
         </div>

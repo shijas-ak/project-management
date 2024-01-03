@@ -5,7 +5,6 @@ const profileController = {
     try {
       const userId = req.params.Id;
       const user = await User.findById(userId);
-      console.log(user);
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -34,25 +33,26 @@ const profileController = {
 
       if (req.body && req.body.others) {
         updateFields.$set = {
-          about: req.body.others.about,
-          company: req.body.others.company,
-          job: req.body.others.job,
-          country: req.body.others.country,
-          address: req.body.others.address,
-          phone: req.body.others.phone,
-          twitter: req.body.others.twitter,
-          facebook: req.body.others.facebook,
-          instagram: req.body.others.instagram,
-          linkedin: req.body.others.linkedin,
+          'others.about': req.body.others.about,
+          'others.company': req.body.others.company,
+          'others.job': req.body.others.job,
+          'others.country': req.body.others.country,
+          'others.address': req.body.others.address,
+          'others.phone': req.body.others.phone,
+          'others.twitter': req.body.others.twitter,
+          'others.facebook': req.body.others.facebook,
+          'others.instagram': req.body.others.instagram,
+          'others.linkedin': req.body.others.linkedin,
         };
       }
 
       if (req.file) {
-        updateFields.profile_image = req.file.path;
+        updateFields.profile_image = req.file.filename;
       }
 
       const user = await User.findByIdAndUpdate(userId, updateFields, {
         new: true,
+        runValidators:true,
       });
 
       if (!user) {

@@ -38,16 +38,36 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   others: {
-    about: String,
-    company: String,
-    job: String,
-    country: String,
-    address: String,
-    phone: String,
-    twitter: String,
-    facebook: String,
-    instagram: String,
-    linkedin: String,
+    about:{
+      type:String,
+    } ,
+    company:{
+      type:String,
+    },
+    job:{
+      type:String,
+    },
+    country:{
+      type:String,
+    },
+    address:{
+      type:String,
+    },
+    phone:{
+      type:String,
+    },
+    twitter:{
+      type:String,
+    },
+    facebook:{
+      type:String,
+    },
+    instagram:{
+      type:String,
+    },
+    linkedin:{
+      type:String,
+    },
   },
 });
 

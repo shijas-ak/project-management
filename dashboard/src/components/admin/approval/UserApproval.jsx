@@ -4,6 +4,9 @@ import "./UserApproval.css";
 
 function UserApproval() {
   const [users, setUsers] = useState([]);
+  const [usernameFilter, setUsernameFilter] = useState("");
+  const [emailFilter, setEmailFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -23,7 +26,9 @@ function UserApproval() {
     try {
       const token = localStorage.getItem("token");
       await callApi("delete", `admin/users/${userId}`, "", token);
+      window.confirm("Are you sure you want to remove this user?");
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+      alert("You have successfully removed the user");
     } catch (error) {
       console.error("Error removing user:", error);
     }
@@ -38,6 +43,8 @@ function UserApproval() {
         { role: newRole },
         token
       );
+      window.confirm("Are you sure you want to change the role of this user?");
+     
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === userId ? { ...user, role: newRole } : user
@@ -54,9 +61,7 @@ function UserApproval() {
       const route = isApproved
         ? `users/unapprove/${userId}`
         : `users/approve/${userId}`;
-
       await callApi("put", route, {}, token);
-
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === userId ? { ...user, isApproved: !isApproved } : user
@@ -67,9 +72,46 @@ function UserApproval() {
     }
   };
 
+  const filterUsers = () => {
+    return users.filter(
+      (user) =>
+        user.username.toLowerCase().includes(usernameFilter.toLowerCase()) &&
+        user.email.toLowerCase().includes(emailFilter.toLowerCase()) &&
+        user.role.toLowerCase().includes(roleFilter.toLowerCase())
+    );
+  };
+
   return (
     <div>
-      <h2>User Approval</h2>
+      <h2>Users</h2>
+      <div>
+        <label htmlFor="filter">Filter users</label>
+        <label>by username:</label>
+        <input
+          type="text"
+          placeholder="Enter the user's username"
+          value={usernameFilter}
+          onChange={(e) => setUsernameFilter(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>by email:</label>
+        <input
+          type="text"
+          placeholder="Enter the user's email"
+          value={emailFilter}
+          onChange={(e) => setEmailFilter(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>by role:</label>
+        <input
+          type="text"
+          placeholder="Enter the role of the user"
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+        />
+      </div>
       <table>
         <thead>
           <tr>
@@ -81,7 +123,7 @@ function UserApproval() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {filterUsers().map((user) => (
             <tr key={user._id}>
               <td>{user.username}</td>
               <td>{user.email}</td>

@@ -8,7 +8,7 @@ router.post('/projects/:Id/tasks', authentication.verifyTokenForAdminAndPM, task
 router.get('/projects/:Id/tasks', authentication.verifyTokenForAdminAndPM, taskController.getAllTasks);
 router.get('/projects/:Id/tasks/:taskId', authentication.verifyToken, taskController.getTaskById);
 router.get('/users/:id/tasks', authentication.verifyToken, taskController.getTasksByUserId);
-router.put('/tasks/:taskId', authentication.verifyToken, taskController.updateTaskById);
+router.put('/projects/:Id/tasks/:taskId', authentication.verifyToken, taskController.updateTaskById);
 router.delete('/projects/:Id/tasks/:taskId', authentication.verifyTokenForAdminAndPM, taskController.deleteTask);
 
 module.exports = router;

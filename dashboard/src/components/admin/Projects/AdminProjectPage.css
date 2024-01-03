@@ -1,0 +1,16 @@
+.admin-project-page {
+    width: 70%;
+    margin: auto;
+  }
+  
+  .project-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .user-dropdown {
+    margin-bottom: 10px;
+  }
+  
+  

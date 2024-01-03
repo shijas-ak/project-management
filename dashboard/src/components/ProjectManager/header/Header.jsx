@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import style from "./header.module.css";
 import { Link, useParams } from "react-router-dom";
 import { callApi } from "../../../services/API";
+import { logout } from "../../../pages/logout";
 
 export default function PageHeader({ showMobileMenu }) {
   const { userId } = useParams();
@@ -115,7 +116,7 @@ export default function PageHeader({ showMobileMenu }) {
           </li>
 
           <li>
-            <button className="main_button">Logout</button>
+            <button className="main_button" onClick={logout}>Logout</button>
           </li>
         </ul>
       </div>

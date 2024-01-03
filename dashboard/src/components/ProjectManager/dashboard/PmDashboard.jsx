@@ -1,6 +1,5 @@
-import {useNavigate } from "react-router-dom";
+import {useNavigate ,useParams} from "react-router-dom";
 import 'chart.js/auto';
-
 import PmDashboardCard from "./PmDashboardCard";
 import { Bar } from "react-chartjs-2";
 import style from "./page.module.css";
@@ -8,6 +7,7 @@ import { callApi } from "../../../services/API";
 import { useEffect, useState } from "react";
 
 export default function PmDashboard() {
+  const {userId} = useParams()
   const navigate = useNavigate();
   const [projectStats, setProjectStats] = useState({
     totalProjects: 0,
@@ -59,7 +59,7 @@ export default function PmDashboard() {
   }, []);
 
   const handleCreateProject = () => {
-    navigate("/create-project");
+    navigate(`/create-project/${userId}`);
   };
 
   const chartData = {

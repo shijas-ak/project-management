@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { callApi,uploadApi } from "../../../services/API";
+import { callApi, uploadApi } from "../../../services/API";
 import "./UserProfile.css";
 
 const Profile = () => {
@@ -20,6 +20,7 @@ const Profile = () => {
         "",
         token
       );
+      console.log(response);
 
       setEditMode(false);
       setUserProfile(response.user);
@@ -42,6 +43,7 @@ const Profile = () => {
         token
       );
       console.log(response.message);
+      alert("profile updated successfully");
 
       setEditMode(false);
     } catch (error) {
@@ -59,7 +61,7 @@ const Profile = () => {
 
   return (
     <div className="container">
-      <h1>My Profile</h1>
+      <h1>MY PROFILE</h1>
       {editMode ? (
         <div>
           <label>Firstname:</label>
@@ -94,70 +96,70 @@ const Profile = () => {
           <input
             type="text"
             name="about"
-            value={userProfile.others ?.about}
+            value={userProfile.others?.about}
             onChange={handleInputChange}
           />
           <label>Company:</label>
           <input
             type="text"
             name="company"
-            value={userProfile.others ?.company}
+            value={userProfile.others?.company}
             onChange={handleInputChange}
           />
           <label>Job:</label>
           <input
             type="text"
             name="job"
-            value={userProfile.others ?.job}
+            value={userProfile.others?.job}
             onChange={handleInputChange}
           />
           <label>Country:</label>
           <input
             type="text"
             name="country"
-            value={userProfile.others ?.country}
+            value={userProfile.others?.country}
             onChange={handleInputChange}
           />
           <label>Address:</label>
           <input
             type="text"
             name="address"
-            value={userProfile.others ?.address}
+            value={userProfile.others?.address}
             onChange={handleInputChange}
           />
           <label>Phone:</label>
           <input
             type="text"
             name="phone"
-            value={userProfile.others ?.phone}
+            value={userProfile.others?.phone}
             onChange={handleInputChange}
           />
           <label>Twitter:</label>
           <input
             type="text"
             name="twitter"
-            value={userProfile.others ?.twitter}
+            value={userProfile.others?.twitter}
             onChange={handleInputChange}
           />
           <label>Facebook:</label>
           <input
             type="text"
             name="facebook"
-            value={userProfile.others ?.facebook}
+            value={userProfile.others?.facebook}
             onChange={handleInputChange}
           />
           <label>Instagram:</label>
           <input
             type="text"
             name="instagram"
-            value={userProfile.others ?.instagram}
+            value={userProfile.others?.instagram}
             onChange={handleInputChange}
           />
           <label>Linkedin:</label>
           <input
             type="text"
             name="linkedin"
-            value={userProfile.others ?.linkedin}
+            value={userProfile.others?.linkedin}
             onChange={handleInputChange}
           />
           <button onClick={handleSaveClick}>Save</button>

@@ -26,7 +26,7 @@ const AdminCreateProject = () => {
     try {
       const token = localStorage.getItem("token");
       const resp =await callApi("post", "projects", projectData, token);
-      console.log("new project",resp);
+      alert(resp.message)
 
       navigate(`/admin-dashboard/${userId}`);
     } catch (error) {

@@ -4,6 +4,7 @@ import { callApi } from "../../../services/API";
 import "./UserTasks.css";
 
 function UserTasks() {
+  const [TaskProjectId, setTaskProjectId] = useState();
   const [userTasks, setUserTasks] = useState([]);
   const { userId } = useParams();
 
@@ -17,6 +18,8 @@ function UserTasks() {
           "",
           token
         );
+
+        setTaskProjectId(response.projectId);
         setUserTasks(response.tasks);
       } catch (error) {
         console.error("Error fetching user tasks:", error);
@@ -29,7 +32,14 @@ function UserTasks() {
   const handleTaskStatusChange = async (taskId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
-      await callApi("put", `tasks/${taskId}`, { status: newStatus }, token);
+      const projectId = TaskProjectId;
+      await callApi(
+        "put",
+        `projects/${projectId}/tasks/${taskId}`,
+        { status: newStatus },
+        token
+      );
+      alert("task status updated successfully")
 
       const updatedUserTasks = userTasks.map((task) =>
         task._id === taskId ? { ...task, status: newStatus } : task
@@ -43,7 +53,7 @@ function UserTasks() {
 
   return (
     <div className="user-tasks-container">
-      <h2>Your Tasks</h2>
+      <h2>MY TASKS</h2>
       <div className="tasks-list">
         {userTasks.length > 0 ? (
           <ul>

@@ -5,7 +5,7 @@ import SideMenuBar from "../sidebar/SideMenuBar";
 import PageHeader from "../header/Header";
 
 const Layout = () => {
-  const {userId} = useParams()
+  const { userId } = useParams();
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileSideMenu, setMobileSideMenu] = useState(false);
@@ -19,11 +19,16 @@ const Layout = () => {
     },
     {
       title: "Projects",
+      path: `/pm-tasks/${userId}`,
+      icon: "icon-dashboard",
+      children: null,
+    },
+    {
+      title: "Tasks",
       path: `/pm-projects/${userId}`,
       icon: "icon-dashboard",
       children: null,
     },
-    { title: "Tasks", path: `/pm-tasks/${userId}`, icon: "icon-dashboard", children: null },
     {
       title: "Profile",
       path: `/pm-profile/${userId}`,

@@ -25,17 +25,25 @@ export default function Register() {
         username: formData.username,
         password: formData.password,
       };
+
       const response = await callApi("post", "register", dataToSend, "");
 
       if (response.status === 200 || response.status === 201) {
-        alert("registration is successful, Now please login with your username and password")
+        alert(
+          "registration is successful, Now please login with your username and password"
+        );
         navigate("/");
+      } else if (
+        response.message === "User with this email or username already exists"
+      ) {
+        alert(response.message);
+      } else if (response.message === "Email or password missing.") {
+        alert(response.message);
       } else {
         console.log("Registration failed:", response);
       }
     } catch (error) {
-      console.log("error is",error)
-      alert(error)
+      alert(error);
       console.error("Registration error", error);
     } finally {
       setIsMutating(false);
@@ -90,7 +98,7 @@ export default function Register() {
                     <div
                       className={`${styles.login_input} ${regStyle.login_input}`}
                     >
-                      <label className={styles.login_label}>Full Name</label>
+                      <label className={styles.login_label}>First name</label>
                       <input
                         {...register("firstName", {
                           required: "This field is required",
@@ -102,7 +110,7 @@ export default function Register() {
                         name="firstName"
                         type="text"
                         className={styles.input_feild}
-                        placeholder="Full Name"
+                        placeholder="Enter First name"
                       />
                       {errors.firstName && (
                         <span className="error-msg">
@@ -153,7 +161,7 @@ export default function Register() {
                           name="username"
                           type="text"
                           className={styles.input_feild}
-                          placeholder="Username"
+                          placeholder="Enter Username"
                         />
                       </div>
                     </div>
@@ -171,7 +179,7 @@ export default function Register() {
                           name="password"
                           type={showPasswordOne ? "text" : "password"}
                           className={styles.input_feild}
-                          placeholder="Password"
+                          placeholder="Enter Password"
                         />
                         <span
                           className={styles.password_toggle}

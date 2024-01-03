@@ -1,10 +1,9 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { callApi } from "../../../services/API";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const AdminCreateTask = () => {
-  const [projects, setProjects] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -17,13 +16,12 @@ const AdminCreateTask = () => {
   });
 
   const { projectId } = useParams();
-  const navigate = useNavigate();
 
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem("token");
       const projectsData = await callApi("get", "projects", "", token);
-      setProjects(projectsData.projects);
+      console.log("projects", projectsData);
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
@@ -38,12 +36,10 @@ const AdminCreateTask = () => {
         { ...taskFormData },
         token
       );
-      alert("Task created successfully");
-      window.location.reload()
+      alert("Task created successfully. Please return to tasks page and assign users.");
       setErrorMessage("");
 
       fetchProjects();
-      
     } catch (error) {
       console.error("Error adding task:", error);
       setErrorMessage("Error adding task. Please try again.");

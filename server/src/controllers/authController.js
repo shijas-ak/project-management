@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const validator = require("email-validator");
 require("dotenv").config();
 const {
   sendWelcomeEmail,
@@ -31,31 +32,17 @@ const authController = {
           .status(400)
           .json({ message: "User with this email or username already exists" });
       }
+     
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const newUser = new User({
         firstname,
-        lastname,
         email,
         username,
         password: hashedPassword,
-        profile_image,
         role,
         isApproved,
-        others: {
-          about: "about",
-          company: "company",
-          job: "job",
-          country: "country",
-          address: "address",
-          phone: "phone",
-          twitter: "twitter",
-          facebook: "facebook",
-          instagram: "instagram",
-          linkedin: "linkedin",
-          ...others,
-        },
       });
 
       await newUser.save();
@@ -97,7 +84,7 @@ const authController = {
           .json({ message: "Invalid username or password" });
       }
       if (user.isApproved === false) {
-        return res.status(401).json({ message: "You are not approved yet" });
+        return res.status(401).json({ message: "You are not approved yet.Please contact the administrator" });
       }
 
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {

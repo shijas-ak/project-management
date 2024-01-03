@@ -26,8 +26,7 @@ const CreateProject = () => {
     try {
       const token = localStorage.getItem("token");
       const resp =await callApi("post", "projects", projectData, token);
-      console.log("new project",resp);
-
+      alert(resp.message)
       navigate(`/pm-dashboard/${userId}`);
     } catch (error) {
       console.error("Error creating project:", error);

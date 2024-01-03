@@ -28,9 +28,10 @@ function UserProjects() {
   }, []);
   return (
     <div className="user-projects-container">
-      <h2>User Projects</h2>
+      <h2>PROJECTS</h2>
       <div className="projects-list">
-        {userProjects.map((project) => (
+        {userProjects.length > 0 ?
+        userProjects.map((project) => (
           <div key={project._id} className="project-card">
             <h3>{project.name}</h3>
             <p className="project-description">
@@ -44,17 +45,22 @@ function UserProjects() {
             <div className="task-list">
               <h4>Tasks:</h4>
               <ul>
-                {project.tasks.map((task) => (
+                {project.tasks.length > 0 ? 
+                project.tasks.map((task) => (
                   <li key={task._id} className="task-item">
                     <strong>{task.title}</strong>
                     <p>Due Date: {task.endDate}</p>
                     <p>Status: {task.status}</p>
                   </li>
-                ))}
+                )) :(
+                  <div>Task List is Empty</div>
+                )}
               </ul>
             </div>
           </div>
-        ))}
+        )) :(
+          <div>You are not assigned to any Projects</div>
+        )}
       </div>
     </div>
   );

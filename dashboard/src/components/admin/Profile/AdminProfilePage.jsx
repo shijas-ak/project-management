@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { callApi,uploadApi } from "../../../services/API";
+import { callApi, uploadApi } from "../../../services/API";
 import "./AdminProfilePage.css";
 
 const AdminProfilePage = () => {
@@ -35,13 +35,13 @@ const AdminProfilePage = () => {
   const handleSaveClick = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await callApi(
+      const response = await uploadApi(
         "patch",
         `users-profile/${userId}`,
         userProfile,
         token
       );
-      console.log("hehe",response);
+      alert("profile updated successfully");
 
       setEditMode(false);
     } catch (error) {
@@ -94,70 +94,70 @@ const AdminProfilePage = () => {
           <input
             type="text"
             name="about"
-            value={userProfile.others.about}
+            value={userProfile.others ?.about}
             onChange={handleInputChange}
           />
           <label>Company:</label>
           <input
             type="text"
             name="company"
-            value={userProfile.others.company}
+            value={userProfile.others ?.company}
             onChange={handleInputChange}
           />
           <label>Job:</label>
           <input
             type="text"
             name="job"
-            value={userProfile.others.job}
+            value={userProfile.others ?.job}
             onChange={handleInputChange}
           />
           <label>Country:</label>
           <input
             type="text"
             name="country"
-            value={userProfile.others.country}
+            value={userProfile.others ?.country}
             onChange={handleInputChange}
           />
           <label>Address:</label>
           <input
             type="text"
             name="address"
-            value={userProfile.others.address}
+            value={userProfile.others ?.address}
             onChange={handleInputChange}
           />
           <label>Phone:</label>
           <input
             type="text"
             name="phone"
-            value={userProfile.others.phone}
+            value={userProfile.others ?.phone}
             onChange={handleInputChange}
           />
           <label>Twitter:</label>
           <input
             type="text"
             name="twitter"
-            value={userProfile.others.twitter}
+            value={userProfile.others ?.twitter}
             onChange={handleInputChange}
           />
           <label>Facebook:</label>
           <input
             type="text"
             name="facebook"
-            value={userProfile.others.facebook}
+            value={userProfile.others ?.facebook}
             onChange={handleInputChange}
           />
           <label>Instagram:</label>
           <input
             type="text"
             name="instagram"
-            value={userProfile.others.instagram}
+            value={userProfile.others ?.instagram}
             onChange={handleInputChange}
           />
           <label>Linkedin:</label>
           <input
             type="text"
             name="linkedin"
-            value={userProfile.others.linkedin}
+            value={userProfile.others ?.linkedin}
             onChange={handleInputChange}
           />
           <button onClick={handleSaveClick}>Save</button>
@@ -165,7 +165,7 @@ const AdminProfilePage = () => {
       ) : (
         <div className="profile-section">
           <img
-            src={userProfile.profile_image}
+            src={`http://localhost:3000${userProfile.profile_image}`}
             alt="Profile"
             className="profile-image"
           />
