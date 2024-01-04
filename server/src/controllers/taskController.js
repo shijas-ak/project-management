@@ -42,8 +42,11 @@ const taskController = {
   getAllTasks: async (req, res) => {
     try {
       const projectId = req.params.Id;
-      const project = await Project.findById(projectId);
-
+      const project = await Project.findById(projectId).populate({
+        path:"tasks.assignees",
+        model: 'User',
+        select:'username'
+      })
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }

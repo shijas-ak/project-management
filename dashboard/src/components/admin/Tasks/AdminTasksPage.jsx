@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { callApi } from "../../../services/API";
 import "./AdminTasksPage.css";
 
 const AdminTasksPage = () => {
   const [projects, setProjects] = useState([]);
-  const [users, setUsers] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [assignedUsers, setAssignedUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
-
+  const navigate = useNavigate();
+  const { userId } = useParams();
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem("token");
       const projectsData = await callApi("get", "projects", "", token);
-
+      if (projectsData.projects.length === 0) {
+        alert(
+          "No projects are present at the moment.Please go back and create a project."
+        );
+        navigate(`/admin-dashboard/${userId}`);
+      }
       setProjects(projectsData.projects);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -21,19 +26,7 @@ const AdminTasksPage = () => {
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const usersData = await callApi("get", "users/approved", "", token);
-
-        setUsers(usersData.approvedUsers);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     fetchProjects();
-    fetchUsers();
   }, []);
 
   const handleSelectProject = async (projectId) => {
@@ -78,7 +71,7 @@ const AdminTasksPage = () => {
       <h2>PROJECTS</h2>
       <div className="container">
         <div className="project-list">
-          {projects.length > 0 ? 
+          {projects.length > 0 ? (
             projects.map((project) => (
               <div
                 key={project._id}
@@ -95,7 +88,7 @@ const AdminTasksPage = () => {
                 </p>
               </div>
             ))
-          : (
+          ) : (
             <div>No Projects Available</div>
           )}
         </div>
@@ -107,29 +100,25 @@ const AdminTasksPage = () => {
                 {projects.find((p) => p._id === selectedProject.id)?.name}
               </h3>
               <h3>LIST OF TASKS</h3>
-              {tasks.length > 0 ?
-              tasks.map((task) => (
-                <div key={task._id}>
-                  <p>Title: {task.title}</p>
-                  <p>Description: {task.description}</p>
-                  <p>Start Date: {task.startDate}</p>
-                  <p>End Date: {task.endDate}</p>
-                  <p>Status: {task.status}</p>
-                  <p>
-                    Assignees:{" "}
-                    {task.assignees && task.assignees.length > 0
-                      ? task.assignees
-                          .map((assigneeId) => {
-                            const user = assignedUsers.find(
-                              (user) => user._id === assigneeId
-                            );
-                            return user ? user.username : "";
-                          })
-                          .join(", ")
-                      : "None"}
-                  </p>
-                </div>
-              )) : (
+              {tasks.length > 0 ? (
+                tasks.map((task) => (
+                  <div key={task._id}>
+                    <p>Title: {task.title}</p>
+                    <p>Description: {task.description}</p>
+                    <p>Start Date: {task.startDate}</p>
+                    <p>End Date: {task.endDate}</p>
+                    <p>Status: {task.status}</p>
+                    <p>
+                      Assignees:{" "}
+                      {task.assignees && task.assignees.length > 0
+                        ? task.assignees
+                            .map((assignee) => assignee.username)
+                            .join(", ")
+                        : "None"}
+                    </p>
+                  </div>
+                ))
+              ) : (
                 <div>No Tasks available for this Project</div>
               )}
             </div>

@@ -104,7 +104,7 @@ export default function PageHeader({ showMobileMenu }) {
               <div className="profile_pic">
                 <img
                   src={`http://localhost:3000/${user.profile_image}`}
-                  alt="image"
+                  alt=""
                 />
               </div>
               <h6>{user.username}</h6>

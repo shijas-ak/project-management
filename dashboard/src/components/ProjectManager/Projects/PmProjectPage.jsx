@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { callApi } from "../../../services/API";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useParams} from "react-router-dom";
 import "./PmProjectPage.css";
 
 const PmProjectPage = () => {
@@ -13,12 +13,17 @@ const PmProjectPage = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const navigate = useNavigate();
+  const {userId} = useParams()
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("token");
         const projectsData = await callApi("get", "projects", "", token);
+        if(projectsData.projects.length === 0) {
+          alert("No tasks are present at the moment.Please create a project to add tasks")
+          navigate(`/pm-dashboard/${userId}`)
+        }
         setProjects(projectsData.projects);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -179,7 +184,7 @@ const PmProjectPage = () => {
               value={selectedStatus}
               onChange={(e) => handleStatusChange(project._id, e.target.value)}
             >
-              <option value="">Change Status</option>
+              <option value="">Change Project Status</option>
               <option value="Completed">Completed</option>
               <option value="Pending">Pending</option>
               <option value="InProgress">InProgress</option>

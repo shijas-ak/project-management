@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  lastname:{
+  lastname: {
     type: String,
   },
   email: {
@@ -27,46 +27,46 @@ const userSchema = new mongoose.Schema({
 
   profile_image: {
     type: String,
-    default:'/images/default_DP.png',
+    default: "/images/pro-pic-avatar.jpg",
   },
   role: {
     type: String,
     default: "user",
   },
-  isApproved:{
-    type : Boolean,
+  isApproved: {
+    type: Boolean,
     default: false,
   },
   others: {
-    about:{
-      type:String,
-    } ,
-    company:{
-      type:String,
+    about: {
+      type: String,
     },
-    job:{
-      type:String,
+    company: {
+      type: String,
     },
-    country:{
-      type:String,
+    job: {
+      type: String,
     },
-    address:{
-      type:String,
+    country: {
+      type: String,
     },
-    phone:{
-      type:String,
+    address: {
+      type: String,
     },
-    twitter:{
-      type:String,
+    phone: {
+      type: String,
     },
-    facebook:{
-      type:String,
+    twitter: {
+      type: String,
     },
-    instagram:{
-      type:String,
+    facebook: {
+      type: String,
     },
-    linkedin:{
-      type:String,
+    instagram: {
+      type: String,
+    },
+    linkedin: {
+      type: String,
     },
   },
 });

@@ -14,6 +14,9 @@ function UserApproval() {
         const token = localStorage.getItem("token");
         const response = await callApi("get", "users/registered", "", token);
         setUsers(response.registeredUsers);
+        if(response.registeredUsers === 0) {
+          alert("No registered users are present")
+        }
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -123,7 +126,8 @@ function UserApproval() {
           </tr>
         </thead>
         <tbody>
-          {filterUsers().map((user) => (
+          {filterUsers().length > 0 ?
+          filterUsers().map((user) => (
             <tr key={user._id}>
               <td>{user.username}</td>
               <td>{user.email}</td>
@@ -159,7 +163,9 @@ function UserApproval() {
                 </select>
               </td>
             </tr>
-          ))}
+          )):(
+            <div><h1>Users are not present</h1></div>
+          )}
         </tbody>
       </table>
     </div>

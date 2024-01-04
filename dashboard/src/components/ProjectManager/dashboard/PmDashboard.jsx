@@ -49,6 +49,9 @@ export default function PmDashboard() {
         const approvedUsers = await callApi("get", "users/approved", "", token);
 
         setApprovedUsersCount(approvedUsers.approvedUsers.length);
+        if (approvedUsers.approvedUsers.length === 0 ) {
+          alert("Approved users are not present")
+        }
       } catch (error) {
         console.error("Error fetching approved users count:", error);
       }
@@ -159,7 +162,8 @@ export default function PmDashboard() {
               </tr>
             </thead>
             <tbody>
-              {projects
+              {projects.filter((project) => project.status === "InProgress").length > 0 ?
+              projects
                 .filter((project) => project.status === "InProgress")
                 .map((ongoingProject) => (
                   <tr key={ongoingProject._id}>
@@ -170,7 +174,9 @@ export default function PmDashboard() {
                       </button>
                     </td>{" "}
                   </tr>
-                ))}
+                )) : (
+                  <h2>No Ongoing Projects</h2>
+                )}
             </tbody>
           </table>
         </div>

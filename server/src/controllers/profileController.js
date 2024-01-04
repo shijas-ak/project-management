@@ -14,6 +14,7 @@ const profileController = {
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
+        profile_image: user.profile_image,
         username: user.username,
         ...user.others,
       };
@@ -28,38 +29,47 @@ const profileController = {
   updateProfileById: async (req, res) => {
     try {
       const userId = req.params.Id;
-
-      const updateFields = {};
-
-      if (req.body && req.body.others) {
-        updateFields.$set = {
-          'others.about': req.body.others.about,
-          'others.company': req.body.others.company,
-          'others.job': req.body.others.job,
-          'others.country': req.body.others.country,
-          'others.address': req.body.others.address,
-          'others.phone': req.body.others.phone,
-          'others.twitter': req.body.others.twitter,
-          'others.facebook': req.body.others.facebook,
-          'others.instagram': req.body.others.instagram,
-          'others.linkedin': req.body.others.linkedin,
-        };
-      }
-
-      if (req.file) {
-        updateFields.profile_image = req.file.filename;
-      }
-
-      const user = await User.findByIdAndUpdate(userId, updateFields, {
-        new: true,
-        runValidators:true,
-      });
+      const user = await User.findById(userId);
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      res.status(200).json({ message: "Profile updated successfully", user });
+      const { firstname, lastname, email, username, ...others } = req.body;
+
+      let profile_image = req.file;
+
+      if (req.file) {
+        profile_image = "/images/" + req.file.filename;
+      }
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            username: req.body.username,
+            profile_image: profile_image,
+            "others.about": others.about,
+            "others.company": others.company,
+            "others.job": others.job,
+            "others.country": others.country,
+            "others.address": others.address,
+            "others.phone": others.phone,
+            "others.twitter": others.twitter,
+            "others.facebook": others.facebook,
+            "others.instagram": others.instagram,
+            "others.linkedin": others.linkedin,
+          },
+        },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        message: "Profile updated successfully",
+        updatedUser: updatedUser,
+      });
     } catch (error) {
       console.error("Error updating user profile:", error);
       res.status(500).json({ message: "Internal Server Error" });

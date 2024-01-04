@@ -1,10 +1,15 @@
 const mongoose = require('mongoose')
 const Project = require("../models/project");
+const User = require('../models/user')
 
 const projectController = {
   getAllProjects: async (req, res) => {
     try {
-      const projects = await Project.find();
+      const projects = await Project.find().populate({
+        path:"tasks.assignees",
+        model: 'User',
+        select:'username'
+      })
       res.status(200).json({ projects });
     } catch (error) {
       console.error(error);

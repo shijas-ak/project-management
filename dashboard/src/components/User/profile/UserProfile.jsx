@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { callApi, uploadApi } from "../../../services/API";
 import "./UserProfile.css";
 
 const Profile = () => {
-  const [userId, setUserId] = useState("");
+  const {userId} =useParams()
   const [userProfile, setUserProfile] = useState({});
   const [editMode, setEditMode] = useState(false);
+  const [file, setFile] = useState(null);
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, [userId]);
-
+  
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -20,7 +19,6 @@ const Profile = () => {
         "",
         token
       );
-      console.log(response);
 
       setEditMode(false);
       setUserProfile(response.user);
@@ -29,6 +27,10 @@ const Profile = () => {
     }
   };
 
+  useEffect(() => {
+    fetchUserProfile();
+  }, [userId]);
+
   const handleEditClick = () => {
     setEditMode(true);
   };
@@ -36,16 +38,25 @@ const Profile = () => {
   const handleSaveClick = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await uploadApi(
-        "patch",
-        `users-profile/${userId}`,
-        userProfile,
-        token
-      );
-      console.log(response.message);
-      alert("profile updated successfully");
+      if (file) {
+        const formData = new FormData();
+        formData.append("profile_image", file);
+        const update = await uploadApi(
+          "patch",
+          `users-profile/${userId}`,
+          formData,
+          token
+        );
+        setEditMode(false);
 
+        console.log(update);
+        alert("Profile Picture Uploaded Successfully");
+      }
+      await callApi("patch", `users-profile/${userId}`, userProfile, token);
+
+      alert("Your Profile updated successfully");
       setEditMode(false);
+      window.location.reload();
     } catch (error) {
       console.error("Error updating user profile:", error);
     }
@@ -59,11 +70,30 @@ const Profile = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+   
+  };
+
   return (
     <div className="container">
       <h1>MY PROFILE</h1>
       {editMode ? (
         <div>
+          <div>
+            <img
+              src={`http://localhost:3000${userProfile.profile_image}`}
+              alt="Profile"
+              className="profile-image"
+            />
+            <label>Profile Image:</label>
+            <input
+              type="file"
+              name="profile_image"
+              onChange={handleFileChange}
+            />
+            <button onClick={handleSaveClick}>Upload image</button>
+          </div>
           <label>Firstname:</label>
           <input
             type="text"
@@ -96,70 +126,70 @@ const Profile = () => {
           <input
             type="text"
             name="about"
-            value={userProfile.others?.about}
+            value={userProfile.about}
             onChange={handleInputChange}
           />
           <label>Company:</label>
           <input
             type="text"
             name="company"
-            value={userProfile.others?.company}
+            value={userProfile.company}
             onChange={handleInputChange}
           />
           <label>Job:</label>
           <input
             type="text"
             name="job"
-            value={userProfile.others?.job}
+            value={userProfile.job}
             onChange={handleInputChange}
           />
           <label>Country:</label>
           <input
             type="text"
             name="country"
-            value={userProfile.others?.country}
+            value={userProfile.country}
             onChange={handleInputChange}
           />
           <label>Address:</label>
           <input
             type="text"
             name="address"
-            value={userProfile.others?.address}
+            value={userProfile.address}
             onChange={handleInputChange}
           />
           <label>Phone:</label>
           <input
             type="text"
             name="phone"
-            value={userProfile.others?.phone}
+            value={userProfile.phone}
             onChange={handleInputChange}
           />
           <label>Twitter:</label>
           <input
             type="text"
             name="twitter"
-            value={userProfile.others?.twitter}
+            value={userProfile.twitter}
             onChange={handleInputChange}
           />
           <label>Facebook:</label>
           <input
             type="text"
             name="facebook"
-            value={userProfile.others?.facebook}
+            value={userProfile.facebook}
             onChange={handleInputChange}
           />
           <label>Instagram:</label>
           <input
             type="text"
             name="instagram"
-            value={userProfile.others?.instagram}
+            value={userProfile.instagram}
             onChange={handleInputChange}
           />
           <label>Linkedin:</label>
           <input
             type="text"
             name="linkedin"
-            value={userProfile.others?.linkedin}
+            value={userProfile.linkedin}
             onChange={handleInputChange}
           />
           <button onClick={handleSaveClick}>Save</button>
@@ -175,16 +205,16 @@ const Profile = () => {
           <p>Lastname: {userProfile.lastname}</p>
           <p>Email: {userProfile.email}</p>
           <p>Username: {userProfile.username}</p>
-          <p>About: {userProfile.others && userProfile.others.about}</p>
-          <p>Company: {userProfile.others && userProfile.others.company}</p>
-          <p>Job: {userProfile.others && userProfile.others.job}</p>
-          <p>Country: {userProfile.others && userProfile.others.country}</p>
-          <p>Address: {userProfile.others && userProfile.others.address}</p>
-          <p>Phone: {userProfile.others && userProfile.others.phone}</p>
-          <p>Twitter: {userProfile.others && userProfile.others.twitter}</p>
-          <p>Facebook: {userProfile.others && userProfile.others.facebook}</p>
-          <p>Instagram: {userProfile.others && userProfile.others.instagram}</p>
-          <p>Linkedin: {userProfile.others && userProfile.others.linkedin}</p>
+          <p>About: {userProfile.about}</p>
+          <p>Company: {userProfile.company}</p>
+          <p>Job: {userProfile.job}</p>
+          <p>Country: {userProfile.country}</p>
+          <p>Address: {userProfile.address}</p>
+          <p>Phone: {userProfile.phone}</p>
+          <p>Twitter: {userProfile.twitter}</p>
+          <p>Facebook: {userProfile.facebook}</p>
+          <p>Instagram: {userProfile.instagram}</p>
+          <p>Linkedin: {userProfile.linkedin}</p>
 
           <button onClick={handleEditClick}>Edit</button>
         </div>
@@ -192,5 +222,4 @@ const Profile = () => {
     </div>
   );
 };
-
 export default Profile;

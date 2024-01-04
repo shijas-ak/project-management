@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { callApi } from "../../../services/API";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import "./AdminProjectPage.css";
 
 const AdminProjectPage = () => {
@@ -10,15 +10,20 @@ const AdminProjectPage = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [selectedAssignees, setSelectedAssignees] = useState({});
   const [selectedUnassignees, setSelectedUnassignees] = useState({});
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus] = useState("");
 
   const navigate = useNavigate();
-
+  const {userId} = useParams()
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("token");
         const projectsData = await callApi("get", "projects", "", token);
+        
+        if(projectsData.projects.length === 0) {
+          alert("No tasks are present at the moment.Please go back and create a project to add tasks")
+          navigate(`/admin-dashboard/${userId}`)
+        }
         setProjects(projectsData.projects);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -171,14 +176,14 @@ const AdminProjectPage = () => {
       {projects.length > 0 ? (
         projects.map((project) => (
           <div key={project._id}>
-            <p>Project: {project.name}</p>
-            <p>Status: {project.status}</p>
+            <p>PROJECT TITLE: {project.name}</p>
+            <p>PROJECT STATUS: {project.status}</p>
 
             <select
               value={selectedStatus}
               onChange={(e) => handleStatusChange(project._id, e.target.value)}
             >
-              <option value="">Change Status</option>
+              <option value="">Change Project Status</option>
               <option value="Completed">Completed</option>
               <option value="Pending">Pending</option>
               <option value="InProgress">InProgress</option>
@@ -247,12 +252,12 @@ const AdminProjectPage = () => {
                 </div>
               ))
             ) : (
-              <h4>Please Create tasks</h4>
+              <h4>PLEASE CREATE TASKS !!!</h4>
             )}
           </div>
         ))
       ) : (
-        <div>No Projects Available</div>
+        <div>PLEASE CREATE A PROJECT</div>
       )}
     </div>
   );
