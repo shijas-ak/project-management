@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { callApi } from "../../../services/API";
-import "./AdminProjectPage.css";
+import "./PmProjectsPage.css";
 
-const AdminProjectPage = () => {
+const PmProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [selectedStatus] = useState("");
-  const [editProjectDetails, setEditProjectDetails] = useState(null);
+
 
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -20,7 +20,7 @@ const AdminProjectPage = () => {
         alert(
           "No projects are present at the moment.Please go back and create a project."
         );
-        navigate(`/admin-dashboard/${userId}`);
+        navigate(`/pm-dashboard/${userId}`);
       }
       setProjects(projectsData.projects);
     } catch (error) {
@@ -41,38 +41,10 @@ const AdminProjectPage = () => {
         "",
         token
       );
-
       setTasks(tasksData.tasks);
       setSelectedProject(projectId);
-      setEditProjectDetails(null);
     } catch (error) {
       console.error("Error fetching tasks:", error);
-    }
-  };
-
-  const handleEditProject = (project) => {
-    setEditProjectDetails({
-      name: project.name,
-      priority: project.priority,
-      tasks: project.tasks,
-    });
-  };
-  const handleUpdateProject = async (projectId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await callApi(
-        "put",
-        `projects/${projectId}`,
-        editProjectDetails,
-        token
-      );
-
-      if (response.message === "Project updated successfully") {
-        alert("Project updated successfully");
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Error updating project:", error);
     }
   };
 
@@ -132,28 +104,6 @@ const AdminProjectPage = () => {
                 >
                   Delete Project
                 </button>
-                {editProjectDetails && (
-                  <div>
-                    <h3>Edit Project</h3>
-                    <form>
-                       <label>Project Name:</label>
-                      <input
-                        type="text"
-                        value={editProjectDetails.name}
-                        onChange={(e) =>
-                          setEditProjectDetails({
-                            ...editProjectDetails,
-                            name: e.target.value,
-                          })
-                        }
-                      />
-                      {" "}
-                      <button type="button" onClick={handleUpdateProject}>
-                        Save Changes
-                      </button>
-                    </form>
-                  </div>
-                )}
 
                 <select
                   value={selectedStatus}
@@ -179,7 +129,7 @@ const AdminProjectPage = () => {
                 {" "}
                 {projects.find((p) => p._id === selectedProject.id)?.name}
               </h3>
-              <h3>LIST OF TASKS</h3>
+              <h2>LIST OF TASKS</h2>
               {tasks.length > 0 ? (
                 tasks.map((task) => (
                   <div key={task._id}>
@@ -211,4 +161,4 @@ const AdminProjectPage = () => {
   );
 };
 
-export default AdminProjectPage;
+export default PmProjectsPage;

@@ -4,12 +4,11 @@ import { callApi, uploadApi } from "../../../services/API";
 import "./UserProfile.css";
 
 const Profile = () => {
-  const {userId} =useParams()
+  const { userId } = useParams();
   const [userProfile, setUserProfile] = useState({});
   const [editMode, setEditMode] = useState(false);
   const [file, setFile] = useState(null);
 
-  
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -72,7 +71,6 @@ const Profile = () => {
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-   
   };
 
   return (

@@ -36,7 +36,7 @@ const AdminCreateProject = () => {
 
   return (
     <div>
-      <h2>Create Project</h2>
+      <h2>CREATE PROJECT</h2>
       <form>
         <div>
           <label>Project Name:</label>

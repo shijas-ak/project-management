@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate,useParams } from "react-router-dom";
-import { callApi } from "../../services/API";
+import { useNavigate, useParams } from "react-router-dom";
+import { callApi } from "../../../services/API";
 
 const CreateProject = () => {
-  const {userId} = useParams()
+  const { userId } = useParams();
   const navigate = useNavigate();
 
   const [projectData, setProjectData] = useState({
@@ -25,8 +25,8 @@ const CreateProject = () => {
   const handleCreateProject = async () => {
     try {
       const token = localStorage.getItem("token");
-      const resp =await callApi("post", "projects", projectData, token);
-      alert(resp.message)
+      const resp = await callApi("post", "projects", projectData, token);
+      alert(resp.message);
       navigate(`/pm-dashboard/${userId}`);
     } catch (error) {
       console.error("Error creating project:", error);
@@ -35,7 +35,7 @@ const CreateProject = () => {
 
   return (
     <div>
-      <h2>Create Project</h2>
+      <h2>CREATE PROJECT</h2>
       <form>
         <div>
           <label>Project Name:</label>

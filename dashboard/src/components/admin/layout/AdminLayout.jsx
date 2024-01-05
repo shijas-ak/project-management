@@ -23,13 +23,13 @@ const AdminLayout = () => {
     },
     {
       title: "Projects",
-      path: `/admin-tasks/${userId}`,
+      path: `/admin-projects/${userId}`,
       icon: "icon-dashboard",
       children: null,
     },
     {
       title: "Tasks",
-      path: `/admin-projects/${userId}`,
+      path: `/admin-tasks/${userId}`,
       icon: "icon-dashboard",
       children: null,
     },

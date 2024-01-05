@@ -30,35 +30,43 @@ function UserProjects() {
     <div className="user-projects-container">
       <h2>PROJECTS</h2>
       <div className="projects-list">
-        {userProjects.length > 0 ?
-        userProjects.map((project) => (
-          <div key={project._id} className="project-card">
-            <h3>{project.name}</h3>
-            <p className="project-description">
-              Description: {project.description}
-            </p>
-            <p>Start Date: {project.startDate}</p>
-            <p>End Date: {project.endDate}</p>
-            <p>Status: {project.status}</p>
-            <p>Tasks Assigned: {project.tasks.length}</p>
+        {userProjects.length > 0 ? (
+          userProjects.map((project) => (
+            <div key={project._id} className="project-card">
+              <h3>Title: {project.name}</h3>
+              <p className="project-description">
+                Description: {project.description}
+              </p>
+              <p>Start Date: {new Date(project.startDate).toDateString()}</p>
+              <p>End Date: {new Date(project.endDate).toDateString()}</p>
+              <p>Status: {project.status}</p>
+              <p>Number of Tasks: {project.tasks.length}</p>
 
-            <div className="task-list">
-              <h4>Tasks:</h4>
-              <ul>
-                {project.tasks.length > 0 ? 
-                project.tasks.map((task) => (
-                  <li key={task._id} className="task-item">
-                    <strong>{task.title}</strong>
-                    <p>Due Date: {task.endDate}</p>
-                    <p>Status: {task.status}</p>
-                  </li>
-                )) :(
-                  <div>Task List is Empty</div>
-                )}
-              </ul>
+              <div className="task-list">
+                <h4>Tasks:</h4>
+                <ul>
+                  {project.tasks.length > 0 ? (
+                    project.tasks.map((task) => (
+                      <li key={task._id} className="task-item">
+                        <strong>{task.title}</strong>
+                        <p>Due Date: {new Date(task.endDate).toDateString()}</p>
+                        <p>Status: {task.status}</p>
+                        <p>
+                          Assignees:{" "}
+                          {task.assignees
+                            .map((assignee) => assignee.username)
+                            .join(", ")}
+                        </p>
+                      </li>
+                    ))
+                  ) : (
+                    <div>Task List is Empty</div>
+                  )}
+                </ul>
+              </div>
             </div>
-          </div>
-        )) :(
+          ))
+        ) : (
           <div>You are not assigned to any Projects</div>
         )}
       </div>

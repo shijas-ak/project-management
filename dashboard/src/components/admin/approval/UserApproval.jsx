@@ -121,7 +121,7 @@ function UserApproval() {
             <th>Username</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Approved</th>
+            <th>Approval</th>
             <th>Actions</th>
           </tr>
         </thead>

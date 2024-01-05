@@ -1,162 +1,245 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import Select from "react-select";
 import { callApi } from "../../../services/API";
+import { useNavigate, useParams } from "react-router-dom";
 import "./PmTasksPage.css";
 
 const PmTasksPage = () => {
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [selectedStatus] = useState("");
-
+  const [approvedUsers, setApprovedUsers] = useState([]);
+  const [assignedUsers, setAssignedUsers] = useState([]);
+  const [selectedAssignees, setSelectedAssignees] = useState({});
+  const [selectedUnassignees, setSelectedUnassignees] = useState({});
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const navigate = useNavigate();
   const { userId } = useParams();
-  const fetchProjects = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const projectsData = await callApi("get", "projects", "", token);
-      if (projectsData.projects.length === 0) {
-        alert(
-          "No projects are present at the moment.Please go back and create a project."
-        );
-        navigate(`/pm-dashboard/${userId}`);
-      }
-      setProjects(projectsData.projects);
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    }
-  };
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const handleSelectProject = async (projectId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const tasksData = await callApi(
-        "get",
-        `projects/${projectId}/tasks`,
-        "",
-        token
-      );
-      setTasks(tasksData.tasks);
-      setSelectedProject(projectId);
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  };
-
-  const handleStatusChange = async (projectId, selectedStatus) => {
-    try {
-      const token = localStorage.getItem("token");
-      await callApi(
-        "put",
-        `projects/${projectId}`,
-        { status: selectedStatus },
-        token
-      );
-      alert("project status updated successfully");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error updating project status:", error);
-    }
-  };
-
-  const handleDeleteProject = async (projectId) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
+    const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await callApi(
-          "delete",
-          `projects/${projectId}`,
+        const projectsData = await callApi("get", "projects", "", token);
+        if (projectsData.projects.length === 0) {
+          alert(
+            "No tasks are present at the moment.Please create a project to add tasks"
+          );
+          navigate(`/pm-dashboard/${userId}`);
+        }
+        setProjects(projectsData.projects);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    const fetchApprovedUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const approvedUsersData = await callApi(
+          "get",
+          "users/approved",
           "",
           token
         );
 
-        if (response.message === "Project deleted successfully") {
-          alert("Project deleted successfully");
-          window.location.reload();
-        }
+        setApprovedUsers(approvedUsersData.approvedUsers);
       } catch (error) {
-        console.error("Error deleting project:", error);
+        console.error("Error fetching approved users:", error);
+      }
+    };
+
+    fetchProjects();
+    fetchApprovedUsers();
+  }, []);
+
+  const TaskCreationPage = (projectId, userId) => {
+    navigate(`/pm-create-task/${projectId}`);
+  };
+
+  const handleDeleteTask = async (projectId, taskId) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await callApi(
+          "delete",
+          `projects/${projectId}/tasks/${taskId}`,
+          "",
+          token
+        );
+        alert(res.message);
+        window.location.reload();
+      } catch (error) {
+        console.error("Error deleting task:", error.message);
       }
     }
   };
 
+  const handleAssignUsers = async (projectId, taskId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const selectedUsers = selectedAssignees[taskId];
+
+      if (!selectedUsers || selectedUsers.length === 0) {
+        alert("Please select users to assign.");
+        return;
+      }
+      const userIds = (selectedAssignees[taskId] || []).map(
+        (user) => user.value
+      );
+
+      const res = await callApi(
+        "put",
+        `projects/${projectId}/tasks/${taskId}/assign-user`,
+
+        { assignees: userIds },
+        token
+      );
+      alert(res.message);
+
+      const assignedUsersData = await callApi(
+        "get",
+        `tasks/${taskId}/assigned-users`,
+        "",
+        token
+      );
+      setAssignedUsers(assignedUsersData.assignedUsers);
+    } catch (error) {
+      console.error("Error assigning users to the task:", error.message);
+    }
+  };
+
+  const handleUnassignUsers = async (projectId, taskId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const selectedUsers = selectedUnassignees[taskId];
+
+      if (!selectedUsers || selectedUsers.length === 0) {
+        alert("Please select users to unassign.");
+        return;
+      }
+      const userIds = selectedUsers.map((user) => user.value);
+      const res = await callApi(
+        "put",
+        `projects/${projectId}/tasks/${taskId}/unassign-user`,
+        { assignees: userIds },
+        token
+      );
+      alert(res.message);
+      window.location.reload();
+
+      const assignedUsersData = await callApi(
+        "get",
+        `tasks/${taskId}/assigned-users`,
+        "",
+        token
+      );
+
+      setAssignedUsers((prevAssignedUsers) => {
+        const updatedAssignedUsers = { ...prevAssignedUsers };
+        updatedAssignedUsers[taskId] = assignedUsersData.assignedUsers || [];
+        return updatedAssignedUsers;
+      });
+    } catch (error) {
+      console.error("Error unassigning users from the task:", error);
+    }
+  };
+
+  const handleAssigneesChange = (taskId, values) => {
+    setSelectedAssignees((prevAssignees) => ({
+      ...prevAssignees,
+      [taskId]: values || [],
+    }));
+  };
+  const handleUnassigneesChange = (taskId, values) => {
+    setSelectedUnassignees((prevAssignees) => ({
+      ...prevAssignees,
+      [taskId]: values || [],
+    }));
+  };
+
   return (
     <div>
-      <h2>PROJECTS</h2>
-      <div className="container">
-        <div className="project-list">
-          {projects.length > 0 ? (
-            projects.map((project) => (
-              <div
-                key={project._id}
-                onClick={() => handleSelectProject(project._id)}
-              >
-                <p>PROJECT NAME: {project.name} </p>
-                <p>PROJECT STATUS: {project.status}</p>
-                <button
-                  onClick={() => handleDeleteProject(project._id)}
-                  className="delete-button"
-                >
-                  Delete Project
-                </button>
+      <h2>TASKS</h2>
+      {projects.length > 0 ? (
+        projects.map((project) => (
+          <div key={project._id}>
+            <p>Project: {project.name}</p>
+            <p>Status: {project.status}</p>
 
-                <select
-                  value={selectedStatus}
-                  onChange={(e) =>
-                    handleStatusChange(project._id, e.target.value)
-                  }
-                >
-                  <option value="">Change Project Status</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Pending">Pending</option>
-                  <option value="InProgress">InProgress</option>
-                </select>
-              </div>
-            ))
-          ) : (
-            <div>No Projects Available</div>
-          )}
-        </div>
-        <div className="tasks-list">
-          {selectedProject ? (
-            <div>
-              <h3>
-                {" "}
-                {projects.find((p) => p._id === selectedProject.id)?.name}
-              </h3>
-              <h2>LIST TASKS</h2>
-              {tasks.length > 0 ? (
-                tasks.map((task) => (
-                  <div key={task._id}>
-                    <p>Title: {task.title}</p>
-                    <p>Description: {task.description}</p>
-                    <p>Start Date: {task.startDate}</p>
-                    <p>End Date: {task.endDate}</p>
-                    <p>Status: {task.status}</p>
-                    <p>
-                      Assignees:{" "}
-                      {task.assignees && task.assignees.length > 0
-                        ? task.assignees
-                            .map((assignee) => assignee.username)
-                            .join(", ")
-                        : "None"}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div>No Tasks available for this Project</div>
-              )}
-            </div>
-          ) : (
-            "Select a project!!"
-          )}
-        </div>
-      </div>
+            <button onClick={() => TaskCreationPage(project._id)}>
+              Add Task
+            </button>
+            <hr />
+            {project.tasks.length > 0 ? (
+              project.tasks.map((task) => (
+                <div key={task._id}>
+                  <p>Task Title: {task.title}</p>
+                  <p>Task Status: {task.status}</p>
+                  <p>Start Date: {new Date(task.startDate).toDateString()}</p>
+                  <p>End Date: {new Date(task.endDate).toDateString()}</p>
+
+                  <p>
+                    Task Assignees:{" "}
+                    {task.assignees
+                      .map((assignee) => assignee.username)
+                      .join(", ")}
+                  </p>
+
+                  <Select
+                    options={approvedUsers.map((user) => ({
+                      value: user._id,
+                      label: user.username,
+                    }))}
+                    value={selectedAssignees[task._id] || []}
+                    isMulti
+                    onChange={(values) =>
+                      handleAssigneesChange(task._id, values)
+                    }
+                    placeholder="Select Users to Assign"
+                  />
+
+                  <button
+                    onClick={() => handleAssignUsers(project._id, task._id)}
+                  >
+                    Assign Users
+                  </button>
+                  <Select
+                    options={(Array.isArray(assignedUsers)
+                      ? assignedUsers
+                      : []
+                    ).map((user) => ({
+                      value: user._id,
+                      label: user.username,
+                    }))}
+                    value={selectedUnassignees[task._id] || []}
+                    isMulti
+                    onChange={(values) =>
+                      handleUnassigneesChange(task._id, values)
+                    }
+                    placeholder="Select Users to Unassign"
+                  />
+                  <button
+                    onClick={() => handleUnassignUsers(project._id, task._id)}
+                  >
+                    Unassign Users
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTask(project._id, task._id)}
+                  >
+                    Delete Task
+                  </button>
+
+                  <hr />
+                </div>
+              ))
+            ) : (
+              <h4>Please Create tasks</h4>
+            )}
+          </div>
+        ))
+      ) : (
+        <div>No Projects Available</div>
+      )}
     </div>
   );
 };

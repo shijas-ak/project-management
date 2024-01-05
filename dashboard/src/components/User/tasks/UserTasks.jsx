@@ -61,7 +61,7 @@ function UserTasks() {
               <li key={task._id} className="task-item">
                 <strong>{task.title}</strong>
                 <p>Description: {task.description}</p>
-                <p>Due Date: {task.endDate}</p>
+                <p>Due Date: {new Date(task.endDate).toDateString()}</p>
                 <p>Status: {task.status}</p>
                 <div className="task-actions">
                   <button

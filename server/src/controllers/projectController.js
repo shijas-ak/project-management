@@ -21,7 +21,11 @@ const projectController = {
     try {
       const userId = req.params.userId;
   
-      const projects = await Project.find({ 'tasks.assignees': new mongoose.Types.ObjectId(userId) });
+      const projects = await Project.find({ 'tasks.assignees': new mongoose.Types.ObjectId(userId) }).populate({
+        path:"tasks.assignees",
+        model: 'User',
+        select:'username'
+      });
   
       if (!projects || projects.length === 0) {
         return res.status(404).json({ message: "No projects found for the user" });

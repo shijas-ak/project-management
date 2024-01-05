@@ -19,13 +19,13 @@ const Layout = () => {
     },
     {
       title: "Projects",
-      path: `/pm-tasks/${userId}`,
+      path: `/pm-projects/${userId}`,
       icon: "icon-dashboard",
       children: null,
     },
     {
       title: "Tasks",
-      path: `/pm-projects/${userId}`,
+      path: `/pm-tasks/${userId}`,
       icon: "icon-dashboard",
       children: null,
     },

@@ -64,7 +64,11 @@ const taskController = {
       const userId = req.params.id;
 
       const projects = await Project.find({
-        "tasks.assignees": new mongoose.Types.ObjectId(userId),
+        "tasks.assignees": new mongoose.Types.ObjectId(userId)
+      }).populate({
+        path:"tasks.assignees",
+        model: 'User',
+        select:'username'
       });
 
       const userTasks = projects.reduce((acc, project) => {

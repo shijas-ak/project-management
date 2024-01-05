@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { callApi } from "../../services/API";
 import styles from "./page.module.css";
-
+import { useLinkedIn } from "react-linkedin-login-oauth2";
 
 export default function Home() {
   const [isMutating, setIsMutating] = useState(false);
@@ -27,13 +27,13 @@ export default function Home() {
         const { role, userId } = response;
 
         if (role === "PM") {
-          alert("Login successful")
+          alert("Login successful");
           navigate(`/pm-dashboard/${userId}`);
         } else if (role === "admin") {
-          alert("Login successful")
+          alert("Login successful");
           navigate(`/admin-dashboard/${userId}`);
         } else {
-          alert("Login successful")
+          alert("Login successful");
           navigate(`/user-dashboard/${userId}`);
         }
       } else {
@@ -44,13 +44,24 @@ export default function Home() {
         });
       }
     } catch (error) {
-      alert(error.message)
+      alert(error.message);
       console.error(error.message);
       setError("password", { type: "manual", message: error.message });
     } finally {
       setIsMutating(false);
     }
   };
+
+  const { linkedInLogin } = useLinkedIn({
+    redirectUri: `${window.location.origin}/linkedin`,
+    onSuccess: (code) => {
+      console.log(code);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   return (
     <div className={styles.login_bg}>
       <div className={styles.login_left}></div>
@@ -188,7 +199,7 @@ export default function Home() {
                 <div
                   className={`${styles.social_btn_wrapper} d-flex align-items-center justify-content-center`}
                 >
-                  <button type="button">
+                  <button type="button" onClick={linkedInLogin}>
                     <span className="icon-linkedin"></span>Login with Linkedin
                   </button>
                 </div>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Navigate, useNavigate } from "react-router-dom";
+import { LinkedInCallback } from "react-linkedin-login-oauth2";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -14,8 +15,8 @@ import Register from "./pages/register/Register";
 import ForgotPasword from "./pages/password-reset/ForgotPasword.jsx";
 import VerifyOtp from "./pages/password-reset/Otp-verify.jsx";
 import ResetPassword from "./pages/password-reset/ResetPassword.jsx";
-import CreateProject from "./pages/projects/CreateProject.jsx";
-import PmProjectPage from "./components/ProjectManager/Projects/PmProjectPage.jsx";
+import CreateProject from "./components/ProjectManager/Projects/CreateProject.jsx";
+import PmProjectsPage from "./components/ProjectManager/Projects/PmProjectsPage.jsx";
 import CreateTask from "./components/ProjectManager/Tasks/CreateTask.jsx";
 import AdminCreateTask from "./components/admin/Tasks/AdminCreateTask.jsx";
 import PmTasksPage from "./components/ProjectManager/Tasks/PmTasksPage.jsx";
@@ -36,37 +37,94 @@ function App() {
     <div className="main_container">
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/linkedin" Component={LinkedInCallback} />
         <Route path="/forgot-password" element={<ForgotPasword />} />
-        <Route path="/verify-otp/:userId" element={<RequiredAuth child={<VerifyOtp />} />} />
-        <Route path="/reset-password/:userId" element={<RequiredAuth child={<ResetPassword />} />} />
+        <Route
+          path="/verify-otp/:userId"
+          element={<RequiredAuth child={<VerifyOtp />} />}
+        />
+        <Route
+          path="/reset-password/:userId"
+          element={<RequiredAuth child={<ResetPassword />} />}
+        />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/admin-create-task/:projectId"
+          element={<RequiredAuth child={<AdminCreateTask />} />}
+        />
+        <Route
+          path="/pm-create-task/:projectId"
+          element={<RequiredAuth child={<CreateTask />} />}
+        />
 
         <Route element={<Layout />}>
-          <Route path="/pm-dashboard/:userId" element={<RequiredAuth child={<PmDashboard />} />} />
-          <Route path="/create-project/:userId" element={<RequiredAuth child={<CreateProject />} />} />
-          <Route path="/pm-projects/:userId" element={<RequiredAuth child={<PmProjectPage />} />} />
-          <Route path="/pm-create-task/:projectId" element={<RequiredAuth child={<CreateTask />} />} />
-          <Route path="/pm-tasks/:userId" element={<RequiredAuth child={<PmTasksPage />} />} />
-          <Route path="/pm-profile/:userId" element={<RequiredAuth child={<ProfilePage />} />} />
+          <Route
+            path="/pm-dashboard/:userId"
+            element={<RequiredAuth child={<PmDashboard />} />}
+          />
+          <Route
+            path="/create-project/:userId"
+            element={<RequiredAuth child={<CreateProject />} />}
+          />
+          <Route
+            path="/pm-projects/:userId"
+            element={<RequiredAuth child={<PmProjectsPage />} />}
+          />
+          <Route
+            path="/pm-tasks/:userId"
+            element={<RequiredAuth child={<PmTasksPage />} />}
+          />
+          <Route
+            path="/pm-profile/:userId"
+            element={<RequiredAuth child={<ProfilePage />} />}
+          />
         </Route>
 
         <Route element={<AdminLayout />}>
-          <Route path="/admin-dashboard/:userId" element={ <RequiredAuth child={<AdminDashboard />} />} />
-          <Route path="/admin-create-project/:userId" element={ <RequiredAuth child={<AdminCreateProject />} />} />
-          <Route path="/admin-create-task/:projectId" element={<RequiredAuth child={<AdminCreateTask />}/>}/>
-          <Route path="/admin-projects/:userId" element={<RequiredAuth child={<AdminProjectPage />} /> }/>
-          <Route path="/users-approval/:userId" element={<RequiredAuth child={<UserApproval />} />} />
-          <Route path="/admin-tasks/:userId" element={<RequiredAuth child={<AdminTasksPage />} />} />
-          <Route path="/admin-profile/:userId" element={<RequiredAuth child={<AdminProfilePage />} />} />
+          <Route
+            path="/admin-dashboard/:userId"
+            element={<RequiredAuth child={<AdminDashboard />} />}
+          />
+          <Route
+            path="/admin-create-project/:userId"
+            element={<RequiredAuth child={<AdminCreateProject />} />}
+          />
+          <Route
+            path="/admin-projects/:userId"
+            element={<RequiredAuth child={<AdminProjectPage />} />}
+          />
+          <Route
+            path="/users-approval/:userId"
+            element={<RequiredAuth child={<UserApproval />} />}
+          />
+          <Route
+            path="/admin-tasks/:userId"
+            element={<RequiredAuth child={<AdminTasksPage />} />}
+          />
+          <Route
+            path="/admin-profile/:userId"
+            element={<RequiredAuth child={<AdminProfilePage />} />}
+          />
         </Route>
 
         <Route element={<UserLayout />}>
-          <Route path="/user-dashboard/:userId" element={<RequiredAuth child={<UserDashboard />} />} />
-          <Route path="/user-profile/:userId" element={<RequiredAuth child={<UserProfile />} />} />
-          <Route path="/user-tasks/:userId" element={<RequiredAuth child={<UserTasks />} />} />
-          <Route path="/user-projects/:userId" element={<RequiredAuth child={<UserProjects />} />} />
+          <Route
+            path="/user-dashboard/:userId"
+            element={<RequiredAuth child={<UserDashboard />} />}
+          />
+          <Route
+            path="/user-profile/:userId"
+            element={<RequiredAuth child={<UserProfile />} />}
+          />
+          <Route
+            path="/user-tasks/:userId"
+            element={<RequiredAuth child={<UserTasks />} />}
+          />
+          <Route
+            path="/user-projects/:userId"
+            element={<RequiredAuth child={<UserProjects />} />}
+          />
         </Route>
-
       </Routes>
     </div>
   );
@@ -77,13 +135,13 @@ const RequiredAuth = ({ child }) => {
   const navigate = useNavigate();
   if (payload && payload.exp && payload.exp <= Date.now() / 1000) {
     applyToken(null);
-    alert('Sorry your session is expired.Please do login again')
+    alert("Sorry your session is expired.Please do login again");
     navigate("/");
     return null;
   }
 
   if (!getToken()) {
-    alert('You are not authorized to access this page.')
+    alert("You are not authorized to access this page.");
     return <Navigate to="/" replace />;
   } else {
     return child;

@@ -37,7 +37,7 @@ const CreateTask = () => {
         { ...taskFormData },
         token
       );
-      alert("task created successfully")
+      alert("Task created successfully. Please return to tasks page and assign users.");
       window.location.reload()
       setErrorMessage("");
 
