@@ -6,8 +6,9 @@ import "./PmTasksPage.css";
 const PmTasksPage = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [assignedUsers, setAssignedUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [selectedStatus] = useState("");
+
 
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -47,6 +48,22 @@ const PmTasksPage = () => {
     }
   };
 
+  const handleStatusChange = async (projectId, selectedStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      await callApi(
+        "put",
+        `projects/${projectId}`,
+        { status: selectedStatus },
+        token
+      );
+      alert("project status updated successfully");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating project status:", error);
+    }
+  };
+
   const handleDeleteProject = async (projectId) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       try {
@@ -79,15 +96,26 @@ const PmTasksPage = () => {
                 key={project._id}
                 onClick={() => handleSelectProject(project._id)}
               >
-                <p>
-                  Name: {project.name}{" "}
-                  <button
-                    onClick={() => handleDeleteProject(project._id)}
-                    className="delete-button"
-                  >
-                    Delete Project
-                  </button>
-                </p>
+                <p>PROJECT NAME: {project.name} </p>
+                <p>PROJECT STATUS: {project.status}</p>
+                <button
+                  onClick={() => handleDeleteProject(project._id)}
+                  className="delete-button"
+                >
+                  Delete Project
+                </button>
+
+                <select
+                  value={selectedStatus}
+                  onChange={(e) =>
+                    handleStatusChange(project._id, e.target.value)
+                  }
+                >
+                  <option value="">Change Project Status</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Pending">Pending</option>
+                  <option value="InProgress">InProgress</option>
+                </select>
               </div>
             ))
           ) : (

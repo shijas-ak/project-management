@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { callApi } from "../../../services/API";
-import { useNavigate,useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./AdminProjectPage.css";
 
 const AdminProjectPage = () => {
@@ -13,16 +13,18 @@ const AdminProjectPage = () => {
   const [selectedStatus] = useState("");
 
   const navigate = useNavigate();
-  const {userId} = useParams()
+  const { userId } = useParams();
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("token");
         const projectsData = await callApi("get", "projects", "", token);
-        
-        if(projectsData.projects.length === 0) {
-          alert("No tasks are present at the moment.Please go back and create a project to add tasks")
-          navigate(`/admin-dashboard/${userId}`)
+
+        if (projectsData.projects.length === 0) {
+          alert(
+            "No tasks are present at the moment.Please go back and create a project to add tasks"
+          );
+          navigate(`/admin-dashboard/${userId}`);
         }
         setProjects(projectsData.projects);
       } catch (error) {
@@ -49,22 +51,6 @@ const AdminProjectPage = () => {
     fetchProjects();
     fetchApprovedUsers();
   }, []);
-
-  const handleStatusChange = async (projectId, selectedStatus) => {
-    try {
-      const token = localStorage.getItem("token");
-      await callApi(
-        "put",
-        `projects/${projectId}`,
-        { status: selectedStatus },
-        token
-      );
-      alert("project status updated successfully")
-      window.location.reload();
-    } catch (error) {
-      console.error("Error updating project status:", error);
-    }
-  };
 
   const TaskCreationPage = (projectId) => {
     navigate(`/admin-create-task/${projectId}`);
@@ -179,15 +165,6 @@ const AdminProjectPage = () => {
             <p>PROJECT TITLE: {project.name}</p>
             <p>PROJECT STATUS: {project.status}</p>
 
-            <select
-              value={selectedStatus}
-              onChange={(e) => handleStatusChange(project._id, e.target.value)}
-            >
-              <option value="">Change Project Status</option>
-              <option value="Completed">Completed</option>
-              <option value="Pending">Pending</option>
-              <option value="InProgress">InProgress</option>
-            </select>
             <button onClick={() => TaskCreationPage(project._id)}>
               Add Task
             </button>

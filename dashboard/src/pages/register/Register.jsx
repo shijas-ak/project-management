@@ -5,16 +5,32 @@ import { Link } from "react-router-dom";
 import { callApi } from "../../services/API";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import validator from "validator";
 
 export default function Register() {
   const [isMutating, setIsMutating] = useState(false);
   const [showPasswordOne, setShowPasswordOne] = useState(false);
+  const [emailError, setEmailError] = useState("");
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+
+  const validateEmail = (email) => {
+    if (validator.isEmail(email)) {
+      setEmailError("Valid Email :)");
+    } else {
+      setEmailError("Enter valid Email!");
+    }
+  };
+
+  const handleEmailChange = (e) => {
+    validateEmail(e.target.value);
+  };
+
   const handleFormSubmit = async (formData) => {
     try {
       setIsMutating(true);
@@ -132,14 +148,18 @@ export default function Register() {
                           required: "This field is required",
                         })}
                         name="email"
-                        type="Email"
+                        type="email"
                         className={styles.input_feild}
+                        onChange={(e) => handleEmailChange(e)}
                         placeholder="Enter email address"
                       />
                       {errors.email && (
                         <span className="error-msg">
                           *{errors.email?.message}
                         </span>
+                      )}
+                      {emailError && (
+                        <span className="error-msg">{emailError}</span>
                       )}
                     </div>
                   </li>

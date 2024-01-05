@@ -7,6 +7,9 @@ const AdminTasksPage = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [selectedStatus] = useState("");
+  const [editProjectDetails, setEditProjectDetails] = useState(null);
+
   const navigate = useNavigate();
   const { userId } = useParams();
   const fetchProjects = async () => {
@@ -41,10 +44,54 @@ const AdminTasksPage = () => {
 
       setTasks(tasksData.tasks);
       setSelectedProject(projectId);
+      setEditProjectDetails(null);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
   };
+
+  const handleEditProject = (project) => {
+    setEditProjectDetails({
+      name: project.name,
+      priority: project.priority,
+      tasks: project.tasks,
+    });
+  };
+  const handleUpdateProject = async (projectId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await callApi(
+        "put",
+        `projects/${projectId}`,
+        editProjectDetails,
+        token
+      );
+
+      if (response.message === "Project updated successfully") {
+        alert("Project updated successfully");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
+  };
+
+  const handleStatusChange = async (projectId, selectedStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      await callApi(
+        "put",
+        `projects/${projectId}`,
+        { status: selectedStatus },
+        token
+      );
+      alert("project status updated successfully");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating project status:", error);
+    }
+  };
+
   const handleDeleteProject = async (projectId) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       try {
@@ -77,15 +124,48 @@ const AdminTasksPage = () => {
                 key={project._id}
                 onClick={() => handleSelectProject(project._id)}
               >
-                <p>
-                  Name: {project.name}{" "}
-                  <button
-                    onClick={() => handleDeleteProject(project._id)}
-                    className="delete-button"
-                  >
-                    Delete Project
-                  </button>
-                </p>
+                <p>PROJECT NAME: {project.name} </p>
+                <p>PROJECT STATUS: {project.status}</p>
+                <button
+                  onClick={() => handleDeleteProject(project._id)}
+                  className="delete-button"
+                >
+                  Delete Project
+                </button>
+                {editProjectDetails && (
+                  <div>
+                    <h3>Edit Project</h3>
+                    <form>
+                       <label>Project Name:</label>
+                      <input
+                        type="text"
+                        value={editProjectDetails.name}
+                        onChange={(e) =>
+                          setEditProjectDetails({
+                            ...editProjectDetails,
+                            name: e.target.value,
+                          })
+                        }
+                      />
+                      {" "}
+                      <button type="button" onClick={handleUpdateProject}>
+                        Save Changes
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                <select
+                  value={selectedStatus}
+                  onChange={(e) =>
+                    handleStatusChange(project._id, e.target.value)
+                  }
+                >
+                  <option value="">Change Project Status</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Pending">Pending</option>
+                  <option value="InProgress">InProgress</option>
+                </select>
               </div>
             ))
           ) : (
