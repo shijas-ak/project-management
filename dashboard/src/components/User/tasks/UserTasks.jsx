@@ -60,8 +60,9 @@ function UserTasks() {
             {userTasks.map((task) => (
               <li key={task._id} className="task-item">
                 <strong>{task.title}</strong>
-                <p>Description: {task.description}</p>
-                <p>Due Date: {new Date(task.endDate).toDateString()}</p>
+                <p>Task   Description: {task.description}</p>
+                <p>Task Start Date: {new Date(task.startDate).toDateString()}</p>
+                <p>Task Due Date: {new Date(task.endDate).toDateString()}</p>
                 <p>Status: {task.status}</p>
                 <div className="task-actions">
                   <button

@@ -35,6 +35,12 @@ export default function Register() {
     try {
       setIsMutating(true);
 
+      if (!validator.isEmail(formData.email)) {
+        alert("Enter a valid email");
+        setIsMutating(false);
+        return;
+      }
+
       const dataToSend = {
         firstname: formData.firstName,
         email: formData.email,
@@ -43,7 +49,6 @@ export default function Register() {
       };
 
       const response = await callApi("post", "register", dataToSend, "");
-      
 
       if (response.status === 200 || response.status === 201) {
         alert(
@@ -56,8 +61,8 @@ export default function Register() {
         alert(response.message);
       } else if (response.message === "Email or password missing.") {
         alert(response.message);
-      }else if(!validator.isEmail){
-        alert("Enter a valid email")
+      } else if (!validator.isEmail) {
+        alert("Enter a valid email");
       } else {
         console.log("Registration failed:", response);
       }
@@ -68,8 +73,6 @@ export default function Register() {
       setIsMutating(false);
     }
   };
-
- 
 
   return (
     <div className={styles.login_bg}>

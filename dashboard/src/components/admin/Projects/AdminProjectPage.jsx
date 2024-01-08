@@ -8,7 +8,6 @@ const AdminProjectPage = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [selectedStatus] = useState("");
-  const [editProjectDetails, setEditProjectDetails] = useState(null);
 
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -44,35 +43,8 @@ const AdminProjectPage = () => {
 
       setTasks(tasksData.tasks);
       setSelectedProject(projectId);
-      setEditProjectDetails(null);
     } catch (error) {
       console.error("Error fetching tasks:", error);
-    }
-  };
-
-  const handleEditProject = (project) => {
-    setEditProjectDetails({
-      name: project.name,
-      priority: project.priority,
-      tasks: project.tasks,
-    });
-  };
-  const handleUpdateProject = async (projectId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await callApi(
-        "put",
-        `projects/${projectId}`,
-        editProjectDetails,
-        token
-      );
-
-      if (response.message === "Project updated successfully") {
-        alert("Project updated successfully");
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Error updating project:", error);
     }
   };
 
@@ -125,35 +97,31 @@ const AdminProjectPage = () => {
                 onClick={() => handleSelectProject(project._id)}
               >
                 <p>PROJECT NAME: {project.name} </p>
+                <p>PROJECT DESC: {project.description}</p>
                 <p>PROJECT STATUS: {project.status}</p>
+                <p>
+                  PROJECT STARTDATE:
+                  {new Date(project.startDate).toDateString()}
+                </p>
+                <p>
+                  PROJECT ENDDATE: {new Date(project.endDate).toDateString()}
+                </p>
+
                 <button
                   onClick={() => handleDeleteProject(project._id)}
                   className="delete-button"
                 >
                   Delete Project
                 </button>
-                {editProjectDetails && (
-                  <div>
-                    <h3>Edit Project</h3>
-                    <form>
-                       <label>Project Name:</label>
-                      <input
-                        type="text"
-                        value={editProjectDetails.name}
-                        onChange={(e) =>
-                          setEditProjectDetails({
-                            ...editProjectDetails,
-                            name: e.target.value,
-                          })
-                        }
-                      />
-                      {" "}
-                      <button type="button" onClick={handleUpdateProject}>
-                        Save Changes
-                      </button>
-                    </form>
-                  </div>
-                )}
+
+                <button
+                  onClick={() =>
+                    navigate(`/admin-edit-project/${userId}/${project._id}`)
+                  }
+                  className="edit-button"
+                >
+                  Edit Project
+                </button>
 
                 <select
                   value={selectedStatus}

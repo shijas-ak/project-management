@@ -14,8 +14,8 @@ function UserApproval() {
         const token = localStorage.getItem("token");
         const response = await callApi("get", "users/registered", "", token);
         setUsers(response.registeredUsers);
-        if(response.registeredUsers === 0) {
-          alert("No registered users are present")
+        if (response.registeredUsers === 0) {
+          alert("No registered users are present");
         }
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -47,7 +47,7 @@ function UserApproval() {
         token
       );
       window.confirm("Are you sure you want to change the role of this user?");
-     
+
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === userId ? { ...user, role: newRole } : user
@@ -118,6 +118,7 @@ function UserApproval() {
       <table>
         <thead>
           <tr>
+            <th>User</th>
             <th>Username</th>
             <th>Email</th>
             <th>Role</th>
@@ -126,45 +127,55 @@ function UserApproval() {
           </tr>
         </thead>
         <tbody>
-          {filterUsers().length > 0 ?
-          filterUsers().map((user) => (
-            <tr key={user._id}>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={user.isApproved}
-                  onChange={() =>
-                    handleApprovalToggle(user._id, user.isApproved)
-                  }
-                />
-              </td>
-              <td>
-                <button onClick={() => handleRemoveUser(user._id)}>
-                  Remove
-                </button>
+          {filterUsers().length > 0 ? (
+            filterUsers().map((user) => (
+              <tr key={user._id}>
+                <td>
+                  <img
+                    src={`http://localhost:3000${user.profile_image}`}
+                    alt="Profile"
+                    className="profile-image"
+                  />
+                </td>
+                <td> {user.username}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={user.isApproved}
+                    onChange={() =>
+                      handleApprovalToggle(user._id, user.isApproved)
+                    }
+                  />
+                </td>
+                <td>
+                  <button onClick={() => handleRemoveUser(user._id)}>
+                    Remove
+                  </button>
 
-                <button
-                  onClick={() =>
-                    handleApprovalToggle(user._id, user.isApproved)
-                  }
-                >
-                  {user.isApproved ? "Disapprove" : "Approve"}
-                </button>
+                  <button
+                    onClick={() =>
+                      handleApprovalToggle(user._id, user.isApproved)
+                    }
+                  >
+                    {user.isApproved ? "Disapprove" : "Approve"}
+                  </button>
 
-                <select
-                  value={user.role}
-                  onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                >
-                  <option value="user">User</option>
-                  <option value="PM">Project Manager</option>
-                </select>
-              </td>
-            </tr>
-          )):(
-            <div><h1>Users are not present</h1></div>
+                  <select
+                    value={user.role}
+                    onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                  >
+                    <option value="user">User</option>
+                    <option value="PM">Project Manager</option>
+                  </select>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <div>
+              <h1>Users are not present</h1>
+            </div>
           )}
         </tbody>
       </table>

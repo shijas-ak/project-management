@@ -10,7 +10,6 @@ const PmTasksPage = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [selectedAssignees, setSelectedAssignees] = useState({});
   const [selectedUnassignees, setSelectedUnassignees] = useState({});
-  const [selectedStatus, setSelectedStatus] = useState("");
 
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -156,6 +155,9 @@ const PmTasksPage = () => {
       [taskId]: values || [],
     }));
   };
+  const handleEditTask = (projectId, taskId) => {
+    navigate(`/pm-edit-task/${userId}/${projectId}/${taskId}`);
+  };
 
   return (
     <div>
@@ -174,6 +176,7 @@ const PmTasksPage = () => {
               project.tasks.map((task) => (
                 <div key={task._id}>
                   <p>Task Title: {task.title}</p>
+                  <p>Task Description: {task.description}</p>
                   <p>Task Status: {task.status}</p>
                   <p>Start Date: {new Date(task.startDate).toDateString()}</p>
                   <p>End Date: {new Date(task.endDate).toDateString()}</p>
@@ -223,11 +226,15 @@ const PmTasksPage = () => {
                   >
                     Unassign Users
                   </button>
+                  <button onClick={() => handleEditTask(project._id, task._id)}>
+                    Edit Task
+                  </button>
                   <button
                     onClick={() => handleDeleteTask(project._id, task._id)}
                   >
                     Delete Task
                   </button>
+                  
 
                   <hr />
                 </div>

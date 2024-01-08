@@ -28,7 +28,7 @@ function UserProjects() {
   }, []);
   return (
     <div className="user-projects-container">
-      <h2>PROJECTS</h2>
+      <h2>MY PROJECTS</h2>
       <div className="projects-list">
         {userProjects.length > 0 ? (
           userProjects.map((project) => (
@@ -43,12 +43,13 @@ function UserProjects() {
               <p>Number of Tasks: {project.tasks.length}</p>
 
               <div className="task-list">
-                <h4>Tasks:</h4>
+                <h4>Tasks List:</h4>
                 <ul>
                   {project.tasks.length > 0 ? (
                     project.tasks.map((task) => (
                       <li key={task._id} className="task-item">
                         <strong>{task.title}</strong>
+                        <p>Task Start Date: {new Date(task.startDate).toDateString()}</p>
                         <p>Due Date: {new Date(task.endDate).toDateString()}</p>
                         <p>Status: {task.status}</p>
                         <p>

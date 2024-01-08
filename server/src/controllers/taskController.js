@@ -43,10 +43,10 @@ const taskController = {
     try {
       const projectId = req.params.Id;
       const project = await Project.findById(projectId).populate({
-        path:"tasks.assignees",
-        model: 'User',
-        select:'username'
-      })
+        path: "tasks.assignees",
+        model: "User",
+        select: "username",
+      });
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
@@ -64,11 +64,11 @@ const taskController = {
       const userId = req.params.id;
 
       const projects = await Project.find({
-        "tasks.assignees": new mongoose.Types.ObjectId(userId)
+        "tasks.assignees": new mongoose.Types.ObjectId(userId),
       }).populate({
-        path:"tasks.assignees",
-        model: 'User',
-        select:'username'
+        path: "tasks.assignees",
+        model: "User",
+        select: "username",
       });
 
       const userTasks = projects.reduce((acc, project) => {

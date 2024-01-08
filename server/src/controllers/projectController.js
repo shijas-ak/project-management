@@ -1,15 +1,14 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const Project = require("../models/project");
-const User = require('../models/user')
 
 const projectController = {
   getAllProjects: async (req, res) => {
     try {
       const projects = await Project.find().populate({
-        path:"tasks.assignees",
-        model: 'User',
-        select:'username'
-      })
+        path: "tasks.assignees",
+        model: "User",
+        select: "username",
+      });
       res.status(200).json({ projects });
     } catch (error) {
       console.error(error);
@@ -20,18 +19,22 @@ const projectController = {
   getProjectsByUserId: async (req, res) => {
     try {
       const userId = req.params.userId;
-  
-      const projects = await Project.find({ 'tasks.assignees': new mongoose.Types.ObjectId(userId) }).populate({
-        path:"tasks.assignees",
-        model: 'User',
-        select:'username'
+
+      const projects = await Project.find({
+        "tasks.assignees": new mongoose.Types.ObjectId(userId),
+      }).populate({
+        path: "tasks.assignees",
+        model: "User",
+        select: "username",
       });
-  
+
       if (!projects || projects.length === 0) {
-        return res.status(404).json({ message: "No projects found for the user" });
+        return res
+          .status(404)
+          .json({ message: "No projects found for the user" });
       }
-  
-      res.status(200).json({ projects,userId });
+
+      res.status(200).json({ projects, userId });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
@@ -79,11 +82,11 @@ const projectController = {
   updateProject: async (req, res) => {
     try {
       const projectId = req.params.Id;
-      const { name, priority, tasks ,status} = req.body;
+      const { name,description,startDate,endDate, priority, tasks, status } = req.body;
 
       const updatedProject = await Project.findByIdAndUpdate(
         projectId,
-        { name, priority, tasks,status },
+        { name,description,startDate,endDate, priority, tasks, status },
         { new: true }
       );
 
@@ -104,7 +107,6 @@ const projectController = {
   deleteProject: async (req, res) => {
     try {
       const projectId = req.params.Id;
-
       const deletedProject = await Project.findByIdAndDelete(projectId);
 
       if (!deletedProject) {

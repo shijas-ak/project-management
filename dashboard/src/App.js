@@ -31,6 +31,14 @@ import AdminTasksPage from "./components/admin/Tasks/AdminTasksPage.jsx";
 import AdminProfilePage from "./components/admin/Profile/AdminProfilePage.jsx";
 import UserApproval from "./components/admin/approval/UserApproval.jsx";
 import AdminCreateProject from "./components/admin/Projects/AdminCreateProject.jsx";
+import AdminEditProject from "./components/admin/Projects/AdminEditProject.jsx";
+import PmEditProject from "./components/ProjectManager/Projects/PmEditProject.jsx";
+import PmEditTask from "./components/ProjectManager/Tasks/PmEditTask.jsx";
+import AdminEditTask from "./components/admin/Tasks/AdminEditTask.jsx";
+
+
+
+
 
 function App() {
   return (
@@ -78,6 +86,14 @@ function App() {
             path="/pm-profile/:userId"
             element={<RequiredAuth child={<ProfilePage />} />}
           />
+           <Route
+            path="/pm-edit-project/:userId/:projectId"
+            element={<RequiredAuth child={< PmEditProject/>} />}
+          />
+           <Route
+            path="/pm-edit-task/:userId/:projectId/:taskId"
+            element={<RequiredAuth child={< PmEditTask/>} />}
+          />
         </Route>
 
         <Route element={<AdminLayout />}>
@@ -93,6 +109,7 @@ function App() {
             path="/admin-projects/:userId"
             element={<RequiredAuth child={<AdminProjectPage />} />}
           />
+          
           <Route
             path="/users-approval/:userId"
             element={<RequiredAuth child={<UserApproval />} />}
@@ -104,6 +121,14 @@ function App() {
           <Route
             path="/admin-profile/:userId"
             element={<RequiredAuth child={<AdminProfilePage />} />}
+          />
+           <Route
+            path="/admin-edit-project/:userId/:projectId"
+            element={<RequiredAuth child={< AdminEditProject/>} />}
+          />
+           <Route
+            path="/admin-edit-task/:userId/:projectId/:taskId"
+            element={<RequiredAuth child={< AdminEditTask/>} />}
           />
         </Route>
 

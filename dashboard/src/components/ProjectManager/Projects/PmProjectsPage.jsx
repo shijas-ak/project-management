@@ -9,7 +9,6 @@ const PmProjectsPage = () => {
   const [tasks, setTasks] = useState([]);
   const [selectedStatus] = useState("");
 
-
   const navigate = useNavigate();
   const { userId } = useParams();
   const fetchProjects = async () => {
@@ -97,12 +96,29 @@ const PmProjectsPage = () => {
                 onClick={() => handleSelectProject(project._id)}
               >
                 <p>PROJECT NAME: {project.name} </p>
+                <p>PROJECT DESC: {project.description}</p>
                 <p>PROJECT STATUS: {project.status}</p>
+                <p>
+                  PROJECT STARTDATE:
+                  {new Date(project.startDate).toDateString()}
+                </p>
+                <p>
+                  PROJECT ENDDATE: {new Date(project.endDate).toDateString()}
+                </p>
+
                 <button
                   onClick={() => handleDeleteProject(project._id)}
                   className="delete-button"
                 >
                   Delete Project
+                </button>
+                <button
+                  onClick={() =>
+                    navigate(`/pm-edit-project/${userId}/${project._id}`)
+                  }
+                  className="edit-button"
+                >
+                  Edit Project
                 </button>
 
                 <select

@@ -18,6 +18,14 @@ table {
   td input {
     margin-right: 5px;
   }
+
+  .profile-image {
+    border-radius: 50%;
+    max-width: 50px;
+    height: auto;
+    margin-bottom: 20px;
+  }
+  
   
   td button {
     margin-right: 5px;

@@ -178,7 +178,6 @@ const assignmentController = {
       const taskId = req.params.taskId;
       const { assignees } = req.body;
 
-
       const project = await Project.findById(projectId);
 
       if (!project) {
@@ -194,7 +193,6 @@ const assignmentController = {
         if (!task.assignees.includes(userId)) {
           task.assignees.push(userId);
         } else {
-          
           console.warn(`User ${userId} is already assigned to the task.`);
         }
       });
@@ -235,7 +233,7 @@ const assignmentController = {
         if (userIndex !== -1) {
           task.assignees.splice(userIndex, 1);
         } else {
-          console.warn(`User ${userId} is not assigned to the task.`); 
+          console.warn(`User ${userId} is not assigned to the task.`);
         }
       });
 
