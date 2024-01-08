@@ -36,25 +36,62 @@ import PmEditProject from "./components/ProjectManager/Projects/PmEditProject.js
 import PmEditTask from "./components/ProjectManager/Tasks/PmEditTask.jsx";
 import AdminEditTask from "./components/admin/Tasks/AdminEditTask.jsx";
 
-
-
-
-
 function App() {
+  
+  const RequiredAuth = ({ child }) => {
+    const payload = getTokenPayload();
+    const navigate = useNavigate();
+    if (payload && payload.exp && payload.exp <= Date.now() / 1000) {
+      applyToken(null);
+      alert("Sorry your session is expired.Please do login again");
+      navigate("/");
+      return null;
+    }
+
+    if (!getToken()) {
+      alert("You are not authorized to access this page.");
+      return <Navigate to="/" replace />;
+    } else {
+      return child;
+    }
+  };
+  const applyToken = (token) => {
+    if (token) {
+      localStorage.setItem("token", token);
+      axios.interceptors.request.use(
+        (config) => {
+          config.headers["Authorization"] = `Bearer ${token}`;
+          return config;
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
+    } else {
+      localStorage.removeItem("token");
+      delete axios.defaults.headers.common.Authorization;
+    }
+  };
+
+  const getTokenPayload = () => {
+    const token = getToken();
+    if (!token) return null;
+
+    return jwtDecode(token);
+  };
+
+  const getToken = () => {
+    return localStorage.getItem("token");
+  };
+
   return (
     <div className="main_container">
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/linkedin" Component={LinkedInCallback} />
         <Route path="/forgot-password" element={<ForgotPasword />} />
-        <Route
-          path="/verify-otp/:userId"
-          element={<VerifyOtp />}
-        />
-        <Route
-          path="/reset-password/:userId"
-          element={<ResetPassword />}
-        />
+        <Route path="/verify-otp/:userId" element={<VerifyOtp />} />
+        <Route path="/reset-password/:userId" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
         <Route
           path="/admin-create-task/:projectId"
@@ -86,13 +123,13 @@ function App() {
             path="/pm-profile/:userId"
             element={<RequiredAuth child={<ProfilePage />} />}
           />
-           <Route
+          <Route
             path="/pm-edit-project/:userId/:projectId"
-            element={<RequiredAuth child={< PmEditProject/>} />}
+            element={<RequiredAuth child={<PmEditProject />} />}
           />
-           <Route
+          <Route
             path="/pm-edit-task/:userId/:projectId/:taskId"
-            element={<RequiredAuth child={< PmEditTask/>} />}
+            element={<RequiredAuth child={<PmEditTask />} />}
           />
         </Route>
 
@@ -109,7 +146,7 @@ function App() {
             path="/admin-projects/:userId"
             element={<RequiredAuth child={<AdminProjectPage />} />}
           />
-          
+
           <Route
             path="/users-approval/:userId"
             element={<RequiredAuth child={<UserApproval />} />}
@@ -122,13 +159,13 @@ function App() {
             path="/admin-profile/:userId"
             element={<RequiredAuth child={<AdminProfilePage />} />}
           />
-           <Route
+          <Route
             path="/admin-edit-project/:userId/:projectId"
-            element={<RequiredAuth child={< AdminEditProject/>} />}
+            element={<RequiredAuth child={<AdminEditProject />} />}
           />
-           <Route
+          <Route
             path="/admin-edit-task/:userId/:projectId/:taskId"
-            element={<RequiredAuth child={< AdminEditTask/>} />}
+            element={<RequiredAuth child={<AdminEditTask />} />}
           />
         </Route>
 
@@ -154,51 +191,5 @@ function App() {
     </div>
   );
 }
-
-const RequiredAuth = ({ child }) => {
-  const payload = getTokenPayload();
-  const navigate = useNavigate();
-  if (payload && payload.exp && payload.exp <= Date.now() / 1000) {
-    applyToken(null);
-    alert("Sorry your session is expired.Please do login again");
-    navigate("/");
-    return null;
-  }
-
-  if (!getToken()) {
-    alert("You are not authorized to access this page.");
-    return <Navigate to="/" replace />;
-  } else {
-    return child;
-  }
-};
-const applyToken = (token) => {
-  if (token) {
-    localStorage.setItem("token", token);
-    axios.interceptors.request.use(
-      (config) => {
-        config.headers["Authorization"] = `Bearer ${token}`;
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-  } else {
-    localStorage.removeItem("token");
-    delete axios.defaults.headers.common.Authorization;
-  }
-};
-
-const getTokenPayload = () => {
-  const token = getToken();
-  if (!token) return null;
-
-  return jwtDecode(token);
-};
-
-const getToken = () => {
-  return localStorage.getItem("token");
-};
 
 export default App;

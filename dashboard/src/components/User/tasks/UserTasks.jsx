@@ -6,7 +6,7 @@ import "./UserTasks.css";
 function UserTasks() {
   const [TaskProjectId, setTaskProjectId] = useState();
   const [userTasks, setUserTasks] = useState([]);
-  const [projectName,setProjectname]= useState({})
+  const [projectName, setProjectname] = useState({});
   const { userId } = useParams();
 
   useEffect(() => {
@@ -19,14 +19,13 @@ function UserTasks() {
           "",
           token
         );
-        setProjectname(response.projects)
+        setProjectname(response.projects);
         setTaskProjectId(response.projectId);
         setUserTasks(response.tasks);
       } catch (error) {
         console.error("Error fetching user tasks:", error);
       }
     };
-
     fetchUserTasks();
   }, [userId]);
 
@@ -41,11 +40,9 @@ function UserTasks() {
         token
       );
       alert("task status updated successfully");
-
       const updatedUserTasks = userTasks.map((task) =>
         task._id === taskId ? { ...task, status: newStatus } : task
       );
-
       setUserTasks(updatedUserTasks);
     } catch (error) {
       console.error("Error updating task status:", error);
@@ -61,7 +58,9 @@ function UserTasks() {
             {userTasks.map((task) => (
               <li key={task._id} className="task-item">
                 <strong>{task.title}</strong>
-                <p>Project Name: {projectName.map((name) => name.projectName)}</p>
+                <p>
+                  Project Name: {projectName.map((name) => name.projectName)}
+                </p>
                 <p>Task Description: {task.description}</p>
                 <p>
                   Task Start Date: {new Date(task.startDate).toDateString()}

@@ -23,23 +23,21 @@ export default function UserDashboard() {
           console.error("UserId is undefined");
           return;
         }
-
         const token = localStorage.getItem("token");
         const tasks = await callApi("get", `users/${userId}/tasks`, "", token);
-
         const totalTasks = tasks.tasks.length;
         const completedTasks = tasks.tasks.filter(
           (task) => task.status === "Completed"
         ).length;
         const pendingTasks = totalTasks - completedTasks;
-        const ongoingTasks = tasks.tasks.filter(task => task.status === "InProgress");
-
+        const ongoingTasks = tasks.tasks.filter(
+          (task) => task.status === "InProgress"
+        );
         setTaskStats({
           totalTasks,
           completedTasks,
           pendingTasks,
         });
-
         setOngoingTasks(ongoingTasks);
       } catch (error) {
         console.error("Error fetching task stats:", error);
@@ -51,11 +49,9 @@ export default function UserDashboard() {
         username: userData.username,
       });
     };
-
     fetchTaskStats();
   }, [userId]);
 
-  
   const chartData = {
     labels: ["Completed Tasks", "Pending Tasks"],
     datasets: [
@@ -115,8 +111,6 @@ export default function UserDashboard() {
               className={`${style.req_card} ${style.light_violet} ${style.shedule}`}
             >
               <Bar data={chartData} options={chartOptions} />
-
-             
             </div>
           </div>
         </div>
@@ -135,18 +129,21 @@ export default function UserDashboard() {
               </tr>
             </thead>
             <tbody>
-              {ongoingTasks.length> 0 ?
-              ongoingTasks.map((ongoingTask) => (
-                <tr key={ongoingTask._id}>
-                  <td>{ongoingTask.title}</td>
-                  <td>
-                    <button className={style.yellowButton}>
-                      {ongoingTask.status}
-                    </button>
-                  </td>{" "}
-                </tr>
-              )):(
-                <div><h2>No Ongoing Tasks</h2></div>
+              {ongoingTasks.length > 0 ? (
+                ongoingTasks.map((ongoingTask) => (
+                  <tr key={ongoingTask._id}>
+                    <td>{ongoingTask.title}</td>
+                    <td>
+                      <button className={style.yellowButton}>
+                        {ongoingTask.status}
+                      </button>
+                    </td>{" "}
+                  </tr>
+                ))
+              ) : (
+                <div>
+                  <h2>No Ongoing Tasks</h2>
+                </div>
               )}
             </tbody>
           </table>

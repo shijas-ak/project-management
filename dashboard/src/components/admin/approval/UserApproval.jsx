@@ -21,7 +21,6 @@ function UserApproval() {
         console.error("Error fetching users:", error);
       }
     };
-
     fetchUsers();
   }, []);
 
@@ -61,15 +60,21 @@ function UserApproval() {
   const handleApprovalToggle = async (userId, isApproved) => {
     try {
       const token = localStorage.getItem("token");
-      const route = isApproved
-        ? `users/unapprove/${userId}`
-        : `users/approve/${userId}`;
-      await callApi("put", route, {}, token);
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === userId ? { ...user, isApproved: !isApproved } : user
-        )
-      );
+      const confirmationMessages = isApproved
+        ? "Are you sure you want to change the approval status of this user?"
+        : "Are you sure you want to approve this user?";
+      const userConfirmation = window.confirm(confirmationMessages);
+      if (userConfirmation) {
+        const route = isApproved
+          ? `users/unapprove/${userId}`
+          : `users/approve/${userId}`;
+        await callApi("put", route, {}, token);
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === userId ? { ...user, isApproved: !isApproved } : user
+          )
+        );
+      }
     } catch (error) {
       console.error("Error toggling user approval:", error);
     }

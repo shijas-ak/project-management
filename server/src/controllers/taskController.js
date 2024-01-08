@@ -85,8 +85,8 @@ const taskController = {
       res.status(200).json({
         userId,
         projects: projects.map((project) => ({
-          projectId:project._id,
-          projectName:project.name,
+          projectId: project._id,
+          projectName: project.name,
         })),
         tasks: userTasks,
       });
@@ -121,7 +121,6 @@ const taskController = {
       const taskId = req.params.taskId;
       const { title, description, startDate, endDate, status } = req.body;
       const project = await Project.findOne({
-        _id: projectId,
         "tasks._id": taskId,
       });
       if (!project) {

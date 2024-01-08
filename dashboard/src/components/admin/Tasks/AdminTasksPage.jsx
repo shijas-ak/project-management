@@ -49,7 +49,7 @@ const AdminTasksPage = () => {
 
     fetchProjects();
     fetchApprovedUsers();
-  }, []);
+  }, );
 
   const TaskCreationPage = (projectId) => {
     navigate(`/admin-create-task/${projectId}`);

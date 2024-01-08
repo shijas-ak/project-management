@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { callApi } from "../../../services/API";
 
 const AdminEditTask = () => {
-    const navigate = useNavigate()
-  const {userId, projectId, taskId } = useParams();
+  const navigate = useNavigate();
+  const { userId, projectId, taskId } = useParams();
   const [taskDetails, setTaskDetails] = useState({
     title: "",
     description: "",
@@ -49,14 +49,14 @@ const AdminEditTask = () => {
   const handleSaveTask = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res =await callApi(
+      await callApi(
         "put",
         `projects/${projectId}/tasks/${taskId}`,
         taskDetails,
         token
       );
       alert("Task details updated successfully");
-      navigate(`/admin-tasks/${userId}`)
+      navigate(`/admin-tasks/${userId}`);
     } catch (error) {
       console.error("Error updating task details:", error);
     }

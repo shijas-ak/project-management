@@ -11,7 +11,6 @@ function UserProjects() {
     const fetchUserProjects = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const response = await callApi(
           "get",
           `projects/user/${userId}`,
@@ -25,7 +24,7 @@ function UserProjects() {
     };
 
     fetchUserProjects();
-  }, []);
+  }, [userId]);
   return (
     <div className="user-projects-container">
       <h2>MY PROJECTS</h2>
@@ -33,13 +32,17 @@ function UserProjects() {
         {userProjects.length > 0 ? (
           userProjects.map((project) => (
             <div key={project._id} className="project-card">
-              <h3>Title: {project.name}</h3>
+              <h3>Project Title: {project.name}</h3>
               <p className="project-description">
-                Description: {project.description}
+                Project Description: {project.description}
               </p>
-              <p>Start Date: {new Date(project.startDate).toDateString()}</p>
-              <p>End Date: {new Date(project.endDate).toDateString()}</p>
-              <p>Status: {project.status}</p>
+              <p>
+                Project Start Date: {new Date(project.startDate).toDateString()}
+              </p>
+              <p>
+                Project End Date: {new Date(project.endDate).toDateString()}
+              </p>
+              <p>Project Current Status: {project.status}</p>
               <p>Number of Tasks: {project.tasks.length}</p>
 
               <div className="task-list">
@@ -49,7 +52,10 @@ function UserProjects() {
                     project.tasks.map((task) => (
                       <li key={task._id} className="task-item">
                         <strong>{task.title}</strong>
-                        <p>Task Start Date: {new Date(task.startDate).toDateString()}</p>
+                        <p>
+                          Task Start Date:{" "}
+                          {new Date(task.startDate).toDateString()}
+                        </p>
                         <p>Due Date: {new Date(task.endDate).toDateString()}</p>
                         <p>Status: {task.status}</p>
                         <p>

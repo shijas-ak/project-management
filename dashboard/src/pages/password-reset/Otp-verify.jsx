@@ -21,7 +21,6 @@ const VerifyOtp = () => {
     setValue("userId", userId);
   }, [userId, setValue]);
 
-
   const onSubmitOTP = async (data) => {
     try {
       const response = await callApi("post", "verify-otp", data, "");
