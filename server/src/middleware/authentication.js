@@ -6,23 +6,16 @@
       if (!req.headers.authorization) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-
       const token = req.headers.authorization.split(" ")[1];
-
       if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-
       const decode = jwt.verify(token, process.env.JWT_SECRET);
-
       const user = await User.findById(decode.userId);
-
       if (!user) {
         return res.status(400).json({ message: "User does not exist" });
       }
-
       req.user = user;
-
       next();
     } catch (err) {
       console.error("Error during token verification:", err.message);

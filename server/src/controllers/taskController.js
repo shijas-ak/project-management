@@ -62,7 +62,6 @@ const taskController = {
   getTasksByUserId: async (req, res) => {
     try {
       const userId = req.params.id;
-
       const projects = await Project.find({
         "tasks.assignees": new mongoose.Types.ObjectId(userId),
       }).populate({
@@ -70,7 +69,6 @@ const taskController = {
         model: "User",
         select: "username",
       });
-
       const userTasks = projects.reduce((acc, project) => {
         const tasksForUser = project.tasks.filter((task) =>
           task.assignees.some((assignee) =>
@@ -79,16 +77,17 @@ const taskController = {
         );
         return [...acc, ...tasksForUser];
       }, []);
-
       if (!userTasks || userTasks.length === 0) {
         return res
           .status(404)
           .json({ message: "Tasks not found for the user" });
       }
-
       res.status(200).json({
         userId,
-        projectId: projects.map((project) => project._id),
+        projects: projects.map((project) => ({
+          projectId:project._id,
+          projectName:project.name,
+        })),
         tasks: userTasks,
       });
     } catch (error) {
@@ -101,19 +100,14 @@ const taskController = {
     try {
       const projectId = req.params.Id;
       const taskId = req.params.taskId;
-
       const project = await Project.findById(projectId);
-
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
-
       const task = project.tasks.id(taskId);
-
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
       }
-
       res.status(200).json({ task });
     } catch (error) {
       console.error(error);
@@ -125,24 +119,18 @@ const taskController = {
     try {
       const projectId = req.params.Id;
       const taskId = req.params.taskId;
-
       const { title, description, startDate, endDate, status } = req.body;
-
       const project = await Project.findOne({
         _id: projectId,
         "tasks._id": taskId,
       });
-
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
-
       const task = project.tasks.id(taskId);
-
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
       }
-
       if (title !== undefined) {
         task.title = title;
       }
@@ -158,9 +146,7 @@ const taskController = {
       if (status !== undefined) {
         task.status = status;
       }
-
       await project.save();
-
       res.status(200).json({
         message: "Task updated successfully",
         task,
@@ -176,22 +162,16 @@ const taskController = {
     try {
       const projectId = req.params.Id;
       const taskId = req.params.taskId;
-
       const project = await Project.findById(projectId);
-
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
-
       const task = project.tasks.id(taskId);
-
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
       }
-
       project.tasks.pull({ _id: taskId });
       await project.save();
-
       res.status(200).json({
         message: "Task deleted successfully",
       });

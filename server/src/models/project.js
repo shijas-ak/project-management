@@ -40,7 +40,6 @@ const projectSchema = new mongoose.Schema({
       endDate: {
         type: Date,
       },
-
       status: {
         type: String,
         default: "pending",

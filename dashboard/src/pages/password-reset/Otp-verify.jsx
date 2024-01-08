@@ -25,14 +25,16 @@ const VerifyOtp = () => {
   const onSubmitOTP = async (data) => {
     try {
       const response = await callApi("post", "verify-otp", data, "");
-      console.log("otp response", response);
-
       if (response.status === 200) {
+        alert("Your verification is successfull")
         navigate(`/reset-password/${userId}`);
       } else {
         setError("otp", { type: "manual", message: response.message });
       }
     } catch (error) {
+      if(error.message === "Invalid OTP"){
+        alert(error.message)
+      }
       console.error(error);
     }
   };
@@ -40,15 +42,14 @@ const VerifyOtp = () => {
   const handleResendOTP = async (data) => {
     try {
       const response = await callApi("post", "resend-otp", data, "");
-
       if (response.status === 200) {
         setResendCount((prevCount) => prevCount + 1);
-        alert("OTP resent successfully")
-        console.log("OTP resent successfully");
+        alert("OTP has been successfully resent to your email.Please do check your email and verify the OTP")
       } else {
         console.error("Error resending OTP:", response.message);
       }
     } catch (error) {
+      alert(error.message)
       console.error(error);
     }
   };

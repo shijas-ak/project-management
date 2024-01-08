@@ -23,9 +23,10 @@ const ResetPassword = () => {
   const onSubmitPassword = async (data) => {
     try {
       const response = await callApi("post", "reset-password", data, "");
-
       if (response.status === 200) {
-        alert("Password reset successfully")
+        alert(
+          "Your Password has been reset.Now please login with your username and updated password"
+        );
         navigate("/");
       } else {
         setError("newPassword", {

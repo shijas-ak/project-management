@@ -63,9 +63,7 @@ export default function Register() {
         alert(response.message);
       } else if (!validator.isEmail) {
         alert("Enter a valid email");
-      } else {
-        console.log("Registration failed:", response);
-      }
+      } 
     } catch (error) {
       alert(error);
       console.error("Registration error", error);

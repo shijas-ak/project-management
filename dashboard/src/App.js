@@ -49,11 +49,11 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasword />} />
         <Route
           path="/verify-otp/:userId"
-          element={<RequiredAuth child={<VerifyOtp />} />}
+          element={<VerifyOtp />}
         />
         <Route
           path="/reset-password/:userId"
-          element={<RequiredAuth child={<ResetPassword />} />}
+          element={<ResetPassword />}
         />
         <Route path="/register" element={<Register />} />
         <Route
