@@ -62,6 +62,12 @@ const PmEditProject = () => {
         alert("Project details updated successfully");
       }
       navigate(`/pm-projects/${userId}`);
+      if (
+        res.status === 400 &&
+        res.data.message === "Project with the same name already exists"
+      ) {
+        alert("Error: Project with the same name already exists");
+      }
     } catch (error) {
       console.error("Error updating project details:", error);
     }

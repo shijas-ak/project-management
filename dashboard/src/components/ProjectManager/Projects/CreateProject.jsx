@@ -28,6 +28,9 @@ const CreateProject = () => {
       const resp = await callApi("post", "projects", projectData, token);
       alert(resp.message);
       navigate(`/pm-dashboard/${userId}`);
+      if (resp.message === "Project with the same name already exists") {
+        alert(resp.message);
+      }
     } catch (error) {
       console.error("Error creating project:", error);
     }

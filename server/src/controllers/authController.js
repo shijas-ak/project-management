@@ -13,14 +13,11 @@ const authController = {
     try {
       const {
         firstname,
-        lastname,
         email,
         username,
         password,
-        profile_image,
         role,
         isApproved,
-        others,
       } = req.body;
 
       const existingUser = await User.findOne({
@@ -32,7 +29,6 @@ const authController = {
           .status(400)
           .json({ message: "User with this email or username already exists" });
       }
-     
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -84,7 +80,12 @@ const authController = {
           .json({ message: "Invalid username or password" });
       }
       if (user.isApproved === false) {
-        return res.status(401).json({ message: "You are not approved yet.Please contact the administrator" });
+        return res
+          .status(401)
+          .json({
+            message:
+              "You are not approved yet.Please contact the administrator",
+          });
       }
 
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {

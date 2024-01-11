@@ -238,7 +238,7 @@ const AdminTasksPage = () => {
                 </div>
               ))
             ) : (
-              <h4>PLEASE CREATE TASKS !!!</h4>
+              <h4>No tasks present for {project.name} !!!</h4>
             )}
           </div>
         ))

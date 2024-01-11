@@ -60,6 +60,15 @@ const projectController = {
     try {
       const { name, description, startDate, endDate } = req.body;
 
+      const existingProject = await Project.findOne({ name });
+
+      if (existingProject) {
+        console.error("Project with the same name already exists");
+        return res
+          .status(400)
+          .json({ message: "Project with the same name already exists" });
+      }
+
       const newProject = new Project({
         name,
         description,
@@ -82,11 +91,23 @@ const projectController = {
   updateProject: async (req, res) => {
     try {
       const projectId = req.params.Id;
-      const { name,description,startDate,endDate, priority, tasks, status } = req.body;
+      const { name, description, startDate, endDate, priority, tasks, status } =
+        req.body;
+      const existingProject = await Project.findOne({
+        name,
+        _id: { $ne: projectId },
+      });
+
+      if (existingProject) {
+        console.error("Project with the same name already exists");
+        return res
+          .status(400)
+          .json({ message: "Project with the same name already exists" });
+      }
 
       const updatedProject = await Project.findByIdAndUpdate(
         projectId,
-        { name,description,startDate,endDate, priority, tasks, status },
+        { name, description, startDate, endDate, priority, tasks, status },
         { new: true }
       );
 
