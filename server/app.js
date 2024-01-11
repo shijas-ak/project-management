@@ -19,12 +19,12 @@ app.use(express.urlencoded({ extended: true}))
 app.use(cors())
 app.use('/images', express.static('./public/images'));
 app.use(authRoutes)
-app.use(projectRoutes)
+app.use('/projects',projectRoutes)
 app.use(taskRoutes)
 app.use(assignRoutes)
 app.use(forgotPasswordRoute)
 app.use(resetPasswordRoute)
-app.use(profileRoutes)
+app.use('/users-profile',profileRoutes)
 
 const PORT = process.env.PORT;
 const mongoUrl = process.env.MONGO_URL;
@@ -39,3 +39,4 @@ mongoose
     });
   })
   .catch((error) => console.log(error));
+  
