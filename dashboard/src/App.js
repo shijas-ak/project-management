@@ -2,7 +2,6 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Navigate, useNavigate } from "react-router-dom";
 import { LinkedInCallback } from "react-linkedin-login-oauth2";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
@@ -37,7 +36,6 @@ import PmEditTask from "./components/ProjectManager/Tasks/PmEditTask.jsx";
 import AdminEditTask from "./components/admin/Tasks/AdminEditTask.jsx";
 
 function App() {
-  
   const RequiredAuth = ({ child }) => {
     const payload = getTokenPayload();
     const navigate = useNavigate();
@@ -47,7 +45,6 @@ function App() {
       navigate("/");
       return null;
     }
-
     if (!getToken()) {
       alert("You are not authorized to access this page.");
       return <Navigate to="/" replace />;
@@ -72,14 +69,12 @@ function App() {
       delete axios.defaults.headers.common.Authorization;
     }
   };
-
   const getTokenPayload = () => {
     const token = getToken();
     if (!token) return null;
 
     return jwtDecode(token);
   };
-
   const getToken = () => {
     return localStorage.getItem("token");
   };
