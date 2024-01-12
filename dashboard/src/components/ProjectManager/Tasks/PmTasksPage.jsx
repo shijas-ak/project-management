@@ -94,6 +94,9 @@ const PmTasksPage = () => {
         token
       );
       alert(res.message);
+      if (res.message === "User is already assigned to the task.") {
+        alert("User is already assigned to the task.");
+      }
 
       const assignedUsersData = await callApi(
         "get",
@@ -180,14 +183,14 @@ const PmTasksPage = () => {
                   <p>Task Status: {task.status}</p>
                   <p>Start Date: {new Date(task.startDate).toDateString()}</p>
                   <p>End Date: {new Date(task.endDate).toDateString()}</p>
-
                   <p>
                     Task Assignees:{" "}
-                    {task.assignees
-                      .map((assignee) => assignee.username)
-                      .join(", ")}
+                    {task.assignees.length > 0
+                      ? task.assignees
+                          .map((assignee) => assignee.username)
+                          .join(", ")
+                      : "None"}
                   </p>
-
                   <Select
                     options={approvedUsers.map((user) => ({
                       value: user._id,
@@ -204,7 +207,7 @@ const PmTasksPage = () => {
                   <button
                     onClick={() => handleAssignUsers(project._id, task._id)}
                   >
-                    Assign Users
+                    Assign
                   </button>
                   <Select
                     options={(Array.isArray(assignedUsers)
@@ -224,7 +227,7 @@ const PmTasksPage = () => {
                   <button
                     onClick={() => handleUnassignUsers(project._id, task._id)}
                   >
-                    Unassign Users
+                    Unassign
                   </button>
                   <button onClick={() => handleEditTask(project._id, task._id)}>
                     Edit Task
@@ -234,7 +237,6 @@ const PmTasksPage = () => {
                   >
                     Delete Task
                   </button>
-                  
 
                   <hr />
                 </div>

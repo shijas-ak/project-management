@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 require('dotenv').config()
-const User = require("../models/user");
 
 const sendWelcomeEmail = (user, password) => {
   

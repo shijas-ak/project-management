@@ -49,7 +49,7 @@ const AdminTasksPage = () => {
 
     fetchProjects();
     fetchApprovedUsers();
-  }, );
+  });
 
   const TaskCreationPage = (projectId) => {
     navigate(`/admin-create-task/${projectId}`);
@@ -131,7 +131,6 @@ const AdminTasksPage = () => {
         "",
         token
       );
-
       setAssignedUsers((prevAssignedUsers) => {
         const updatedAssignedUsers = { ...prevAssignedUsers };
         updatedAssignedUsers[taskId] = assignedUsersData.assignedUsers || [];
@@ -179,14 +178,14 @@ const AdminTasksPage = () => {
                   <p>Task Status: {task.status}</p>
                   <p>Start Date: {new Date(task.startDate).toDateString()}</p>
                   <p>End Date: {new Date(task.endDate).toDateString()}</p>
-
                   <p>
                     Task Assignees:{" "}
-                    {task.assignees
-                      .map((assignee) => assignee.username)
-                      .join(", ")}
+                    {task.assignees.length > 0
+                      ? task.assignees
+                          .map((assignee) => assignee.username)
+                          .join(", ")
+                      : "None"}
                   </p>
-
                   <Select
                     options={approvedUsers.map((user) => ({
                       value: user._id,
@@ -203,7 +202,7 @@ const AdminTasksPage = () => {
                   <button
                     onClick={() => handleAssignUsers(project._id, task._id)}
                   >
-                    Assign Users
+                    Assign
                   </button>
                   <Select
                     options={(Array.isArray(assignedUsers)
@@ -223,7 +222,7 @@ const AdminTasksPage = () => {
                   <button
                     onClick={() => handleUnassignUsers(project._id, task._id)}
                   >
-                    Unassign Users
+                    Unassign
                   </button>
                   <button onClick={() => handleEditTask(project._id, task._id)}>
                     Edit Task
@@ -233,7 +232,6 @@ const AdminTasksPage = () => {
                   >
                     Delete Task
                   </button>
-
                   <hr />
                 </div>
               ))
