@@ -24,7 +24,7 @@ app.use(resetPasswordRoute);
 app.use("/users-profile", profileRoutes);
 
 const PORT = process.env.PORT;
-const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/TodoTracker";
+const mongoUrl = process.env.MONGO_URL;
 
 mongoose
   .connect(mongoUrl)
