@@ -1,0 +1,40 @@
+{
+  "files": {
+    "main.css": "/static/css/main.b432076a.css",
+    "main.js": "/static/js/main.2294f948.js",
+    "static/js/787.1cd31a9e.chunk.js": "/static/js/787.1cd31a9e.chunk.js",
+    "static/media/login_bg.jpg": "/static/media/login_bg.b2c92d029a7712f6c4ee.jpg",
+    "static/media/soleillight-webfont.svg": "/static/media/soleillight-webfont.c1e32482ead6ec343439.svg",
+    "static/media/soleilregular-webfont.svg": "/static/media/soleilregular-webfont.ea79dc8ecdc09d0922a1.svg",
+    "static/media/soleilbook-webfont.svg": "/static/media/soleilbook-webfont.770e4064f96632d94af1.svg",
+    "static/media/soleilbold-webfont.svg": "/static/media/soleilbold-webfont.090dee25cc825dbec2bd.svg",
+    "static/media/soleillight-webfont.ttf": "/static/media/soleillight-webfont.1a0c5461c98f3d5d55b0.ttf",
+    "static/media/soleilbook-webfont.ttf": "/static/media/soleilbook-webfont.b22bc692534a65ee8489.ttf",
+    "static/media/soleilbold-webfont.ttf": "/static/media/soleilbold-webfont.1f5bdee8cd4c2fc3af21.ttf",
+    "static/media/soleilregular-webfont.ttf": "/static/media/soleilregular-webfont.f5cc6fafc2ec1e605527.ttf",
+    "static/media/icomoon.svg?kazefx": "/static/media/icomoon.b937e26824d78df05299.svg",
+    "static/media/soleilbold-webfont.woff": "/static/media/soleilbold-webfont.afa23548b628912150bc.woff",
+    "static/media/soleilbook-webfont.woff": "/static/media/soleilbook-webfont.d86d89ce3763a2c86950.woff",
+    "static/media/soleillight-webfont.woff": "/static/media/soleillight-webfont.f9d05bcff6a71fce143a.woff",
+    "static/media/soleilregular-webfont.woff": "/static/media/soleilregular-webfont.ee8d6106d8e6ac72cfc1.woff",
+    "static/media/soleilbold-webfont.eot": "/static/media/soleilbold-webfont.6f8a0a54a84d8d18bd3d.eot",
+    "static/media/soleilbook-webfont.eot": "/static/media/soleilbook-webfont.3150586f73cc61d147c3.eot",
+    "static/media/soleillight-webfont.eot": "/static/media/soleillight-webfont.1256058ce24406465923.eot",
+    "static/media/soleilregular-webfont.eot": "/static/media/soleilregular-webfont.69d0674d6ea215a9544f.eot",
+    "static/media/soleilbold-webfont.woff2": "/static/media/soleilbold-webfont.42be2c5e0d9fb6234d32.woff2",
+    "static/media/soleilbook-webfont.woff2": "/static/media/soleilbook-webfont.f0cb1a4662b15012b721.woff2",
+    "static/media/soleilregular-webfont.woff2": "/static/media/soleilregular-webfont.8e3122f088ecba885b52.woff2",
+    "static/media/soleillight-webfont.woff2": "/static/media/soleillight-webfont.1b3c1c6cacb9872a7d90.woff2",
+    "static/media/icomoon.eot?kazefx": "/static/media/icomoon.c787f0fccc3436852ec9.eot",
+    "static/media/icomoon.woff?kazefx": "/static/media/icomoon.d0395b3a31f17b86bb5f.woff",
+    "static/media/icomoon.ttf?kazefx": "/static/media/icomoon.efb147f52a3fccdb2152.ttf",
+    "index.html": "/index.html",
+    "main.b432076a.css.map": "/static/css/main.b432076a.css.map",
+    "main.2294f948.js.map": "/static/js/main.2294f948.js.map",
+    "787.1cd31a9e.chunk.js.map": "/static/js/787.1cd31a9e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b432076a.css",
+    "static/js/main.2294f948.js"
+  ]
+}
