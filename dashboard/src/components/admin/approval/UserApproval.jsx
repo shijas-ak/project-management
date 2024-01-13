@@ -137,7 +137,7 @@ function UserApproval() {
               <tr key={user._id}>
                 <td>
                   <img
-                    src={`https://project-tracker-737o.onrender.com${user.profile_image}`}
+                    src={`https://project-tracker-737o.onrender.com/${user.profile_image}`}
                     alt="Profile"
                     className="profile-image"
                   />
