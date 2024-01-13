@@ -1,5 +1,5 @@
 const callApi = async (method, endpoint, data, token) => {
-    const url = `http://localhost:3000/${endpoint}`;
+    const url = `https://project-tracker-737o.onrender.com/${endpoint}`;
   
     const headers = {
       "Content-Type": "application/json",
@@ -34,7 +34,7 @@ const callApi = async (method, endpoint, data, token) => {
   };
   
   const uploadApi = async (method, endpoint, data, token) => {
-    const url = `http://localhost:3000/${endpoint}`;
+    const url = `https://project-tracker-737o.onrender.com/${endpoint}`;
   
     const headers = {};
   

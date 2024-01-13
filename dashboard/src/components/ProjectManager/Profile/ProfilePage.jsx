@@ -81,7 +81,7 @@ const Profile = () => {
         <div>
           <div>
             <img
-              src={`http://localhost:3000${userProfile.profile_image}`}
+              src={`https://project-tracker-737o.onrender.com${userProfile.profile_image}`}
               alt="Profile"
               className="profile-image"
             />
@@ -196,7 +196,7 @@ const Profile = () => {
       ) : (
         <div className="profile-section">
           <img
-            src={`http://localhost:3000${userProfile.profile_image}`}
+            src={`https://project-tracker-737o.onrender.com${userProfile.profile_image}`}
             alt="Profile"
             className="profile-image"
           />
