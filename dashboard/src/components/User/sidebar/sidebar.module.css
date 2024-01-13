@@ -14,6 +14,17 @@
     z-index: 1;
     overflow: auto;
 }
+.sidebar_link {
+    /* Your existing link styles go here */
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+  }
+  
+  .sidebar_link:hover {
+    /* Additional styles for hover state */
+    color: darkblue;
+  }
 
 .sidebar_inner::-webkit-scrollbar {
     display: none;

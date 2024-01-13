@@ -49,7 +49,7 @@ const PmEditTask = () => {
   const handleSaveTask = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res =await callApi(
+      await callApi(
         "put",
         `projects/${projectId}/tasks/${taskId}`,
         taskDetails,

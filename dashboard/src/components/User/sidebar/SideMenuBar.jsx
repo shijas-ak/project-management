@@ -39,12 +39,12 @@ export default function SideMenuBar({
                   <SideMenubarItem key={index} item={item} />
                 ))}
               <li className="sidebar_item ">
-                <a className="sidebar_link" onClick={logout}>
+                <button className="sidebar_link" onClick={logout}>
                   <span className={`${style.menu_icon} menu_icon`}>
                     <span className="icon-log_out"></span>
                   </span>
                   <span className="menu_title">Logout</span>
-                </a>
+                </button>
               </li>
             </ul>
           </nav>

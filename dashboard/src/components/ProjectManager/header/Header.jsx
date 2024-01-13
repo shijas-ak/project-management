@@ -13,7 +13,7 @@ export default function PageHeader({ showMobileMenu }) {
     email: "",
     profile_image: "",
   });
-  const [users, setUsers] = useState([]);
+  const [users] = useState([]);
 
   let toggleRef = useRef(null);
 
@@ -71,7 +71,7 @@ export default function PageHeader({ showMobileMenu }) {
             <div className="profile_avatar">
               <img
                 src={`http://localhost:3000${userProfile.profile_image}`}
-                alt="image"
+                alt="dp"
                 width="42px"
               />
             </div>
@@ -104,7 +104,7 @@ export default function PageHeader({ showMobileMenu }) {
               <div className="profile_pic">
                 <img
                   src={`http://localhost:3000/${user.profile_image}`}
-                  alt="image"
+                  alt="dp"
                 />
               </div>
               <h6>{user.username}</h6>
