@@ -70,7 +70,7 @@ export default function PageHeader({ showMobileMenu }) {
           >
             <div className="profile_avatar">
               <img
-                src={`https://project-tracker-737o.onrender.com/${userProfile.profile_image}`}
+                src={`https://project-tracker-737o.onrender.com${userProfile.profile_image}`}
                 alt="dp"
                 width="42px"
               />
