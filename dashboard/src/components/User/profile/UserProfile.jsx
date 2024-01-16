@@ -18,7 +18,6 @@ const Profile = () => {
         "",
         token
       );
-
       setEditMode(false);
       setUserProfile(response.user);
     } catch (error) {
