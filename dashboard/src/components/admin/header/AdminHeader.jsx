@@ -22,7 +22,6 @@ export default function PageHeader({ showMobileMenu }) {
       try {
         const token = localStorage.getItem("token");
         const response = await callApi("get", "users-profile", "", token);
-        console.log(response);
         const userData = response.user;
 
         setUserProfile({

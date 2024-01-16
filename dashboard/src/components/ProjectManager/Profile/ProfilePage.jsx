@@ -40,7 +40,7 @@ const Profile = () => {
       if (file) {
         const formData = new FormData();
         formData.append("profile_image", file);
-        const update = await uploadApi(
+        await uploadApi(
           "patch",
           `users-profile/${userId}`,
           formData,
@@ -48,7 +48,6 @@ const Profile = () => {
         );
         setEditMode(false);
 
-        console.log(update);
         alert("Profile Picture Uploaded Successfully");
       }
       await callApi("patch", `users-profile/${userId}`, userProfile, token);

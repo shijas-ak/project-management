@@ -53,13 +53,8 @@ export default function Home() {
   };
 
   const { linkedInLogin } = useLinkedIn({
-    redirectUri: `${window.location.origin}/linkedin`,
-    onSuccess: (code) => {
-      console.log(code);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
+    redirectUri: `${window.location.origin}/linkedin`
+   
   });
 
   return (

@@ -52,10 +52,8 @@ const callApi = async (method, endpoint, data, token) => {
     }
   
     try {
-      console.log("API Request:", method, url, options);
       const response = await fetch(url, options);
       const responseData = await response.json();
-      console.log("API Response:", response.status, responseData);
       
       if (!response.ok) {
         throw new Error(responseData.message || "Request failed");

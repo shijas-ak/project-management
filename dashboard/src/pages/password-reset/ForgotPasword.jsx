@@ -16,7 +16,6 @@ const ForgotPassword = () => {
   const onSubmitEmail = async (data) => {
     try {
       const response = await callApi("post", "forgot-password", data, "");
-      console.log("hi",response);
       const userId = response.userId;
       if (response.status === 200) {
         alert("OTP has been successfully sent to your email.Please do check your email and verify the OTP")

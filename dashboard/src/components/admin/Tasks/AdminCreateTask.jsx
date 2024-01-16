@@ -20,8 +20,7 @@ const AdminCreateTask = () => {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem("token");
-      const projectsData = await callApi("get", "projects", "", token);
-      console.log("projects", projectsData);
+      await callApi("get", "projects", "", token);
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
