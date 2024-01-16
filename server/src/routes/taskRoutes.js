@@ -4,7 +4,7 @@ const taskController = require('../controllers/taskController.js');
 const authentication = require('../middleware/authentication');
 
 
-router.post('/projects/:Id/tasks', authentication.verifyToken, taskController.createTask);
+router.post('/projects/:Id/tasks', authentication.verifyTokenForAdminAndPM, taskController.createTask);
 router.get('/projects/:Id/tasks', authentication.verifyTokenForAdminAndPM, taskController.getAllTasks);
 router.get('/projects/:Id/tasks/:taskId', authentication.verifyToken, taskController.getTaskById);
 router.get('/users/:id/tasks', authentication.verifyToken, taskController.getTasksByUserId);
