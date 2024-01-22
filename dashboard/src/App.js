@@ -14,7 +14,7 @@ import Register from "./pages/register/Register";
 import ForgotPasword from "./pages/password-reset/ForgotPasword.jsx";
 import VerifyOtp from "./pages/password-reset/Otp-verify.jsx";
 import ResetPassword from "./pages/password-reset/ResetPassword.jsx";
-import CreateProject from "./components/ProjectManager/Projects/CreateProject.jsx";
+import CreateProject from "./components/ProjectManager/Projects/PmCreateProject.jsx";
 import PmProjectsPage from "./components/ProjectManager/Projects/PmProjectsPage.jsx";
 import CreateTask from "./components/ProjectManager/Tasks/CreateTask.jsx";
 import AdminCreateTask from "./components/admin/Tasks/AdminCreateTask.jsx";
@@ -34,6 +34,11 @@ import AdminEditProject from "./components/admin/Projects/AdminEditProject.jsx";
 import PmEditProject from "./components/ProjectManager/Projects/PmEditProject.jsx";
 import PmEditTask from "./components/ProjectManager/Tasks/PmEditTask.jsx";
 import AdminEditTask from "./components/admin/Tasks/AdminEditTask.jsx";
+import UserCreateTask from "./components/User/tasks/UserCreateTask.jsx";
+import UserEditTask from "./components/User/tasks/UserEditTask.jsx";
+import AdminAssignUsersPage from "./components/admin/Projects/AdminAssignUsers.jsx";
+import PmCreateProject from "./components/ProjectManager/Projects/PmCreateProject.jsx";
+import PmAssignUsers from "./components/ProjectManager/Projects/PmAssignUsers.jsx";
 
 function App() {
   const RequiredAuth = ({ child }) => {
@@ -88,23 +93,13 @@ function App() {
         <Route path="/verify-otp/:userId" element={<VerifyOtp />} />
         <Route path="/reset-password/:userId" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
-        <Route
-          path="/admin-create-task/:projectId"
-          element={<RequiredAuth child={<AdminCreateTask />} />}
-        />
-        <Route
-          path="/pm-create-task/:projectId"
-          element={<RequiredAuth child={<CreateTask />} />}
-        />
+        
+       
 
         <Route element={<Layout />}>
           <Route
             path="/pm-dashboard/:userId"
             element={<RequiredAuth child={<PmDashboard />} />}
-          />
-          <Route
-            path="/create-project/:userId"
-            element={<RequiredAuth child={<CreateProject />} />}
           />
           <Route
             path="/pm-projects/:userId"
@@ -114,9 +109,21 @@ function App() {
             path="/pm-tasks/:userId"
             element={<RequiredAuth child={<PmTasksPage />} />}
           />
+           <Route
+          path="/pm-create-task/:projectId/:userId"
+          element={<RequiredAuth child={<CreateTask />} />}
+        />
           <Route
             path="/pm-profile/:userId"
             element={<RequiredAuth child={<ProfilePage />} />}
+          />
+          <Route
+            path="/pm-create-project/:userId"
+            element={<RequiredAuth child={<PmCreateProject />} />}
+          />
+           <Route
+            path="/pm-assign-users/:userId/:projectId"
+            element={<RequiredAuth child={<PmAssignUsers />} />}
           />
           <Route
             path="/pm-edit-project/:userId/:projectId"
@@ -137,6 +144,14 @@ function App() {
             path="/admin-create-project/:userId"
             element={<RequiredAuth child={<AdminCreateProject />} />}
           />
+           <Route
+          path="/admin-assign-users/:userId/:projectId"
+          element={<RequiredAuth child={<AdminAssignUsersPage />} />}
+        />
+          <Route
+          path="/admin-create-task/:projectId/:userId"
+          element={<RequiredAuth child={<AdminCreateTask />} />}
+        />
           <Route
             path="/admin-projects/:userId"
             element={<RequiredAuth child={<AdminProjectPage />} />}
@@ -176,6 +191,14 @@ function App() {
           <Route
             path="/user-tasks/:userId"
             element={<RequiredAuth child={<UserTasks />} />}
+          />
+            <Route
+            path="/user-create-task/:projectId/:userId"
+            element={<RequiredAuth child={<UserCreateTask />} />}
+          />
+            <Route
+            path="/user-edit-task/:userId/:projectId/:taskId"
+            element={<RequiredAuth child={<UserEditTask />} />}
           />
           <Route
             path="/user-projects/:userId"

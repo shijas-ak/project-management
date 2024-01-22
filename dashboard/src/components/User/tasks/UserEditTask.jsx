@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { callApi } from "../../../services/API";
 
-const PmEditTask = () => {
+const UserEditTask = () => {
   const navigate = useNavigate();
   const { userId, projectId, taskId } = useParams();
   const [taskDetails, setTaskDetails] = useState({
@@ -23,6 +23,7 @@ const PmEditTask = () => {
           "",
           token
         );
+        console.log(taskData);
         setTaskDetails({
           title: taskData.title,
           description: taskData.description,
@@ -55,8 +56,8 @@ const PmEditTask = () => {
         taskDetails,
         token
       );
-      alert("Task details updated successfully");
-      navigate(`/pm-tasks/${userId}`);
+      alert("Task updated successfully");
+      navigate(`/user-tasks/${userId}`);
     } catch (error) {
       console.error("Error updating task details:", error);
     }
@@ -121,4 +122,4 @@ const PmEditTask = () => {
   );
 };
 
-export default PmEditTask;
+export default UserEditTask;

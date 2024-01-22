@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { callApi } from "../../../services/API";
+import "./PmCreateProject.css"; 
 
-const CreateProject = () => {
+
+const PmCreateProject = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
 
@@ -12,7 +14,25 @@ const CreateProject = () => {
     priority: "intermediate",
     startDate: "",
     endDate: "",
+    assignees: [],
   });
+
+  const [allApprovedUsers, setAllApprovedUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchAllApprovedUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await callApi("get", "users/approved", "", token);
+        console.log(response);
+        setAllApprovedUsers(response.approvedUsers);
+      } catch (error) {
+        console.error("Error fetching approved users:", error);
+      }
+    };
+
+    fetchAllApprovedUsers();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,12 +42,37 @@ const CreateProject = () => {
     }));
   };
 
+  const handleAssigneeChange = (userId) => {
+    const isSelected = projectData.assignees.includes(userId);
+
+    if (isSelected) {
+      setProjectData((prevData) => ({
+        ...prevData,
+        assignees: prevData.assignees.filter((id) => id !== userId),
+      }));
+    } else {
+      setProjectData((prevData) => ({
+        ...prevData,
+        assignees: [...prevData.assignees, userId],
+      }));
+    }
+  };
+
   const handleCreateProject = async () => {
     try {
       const token = localStorage.getItem("token");
-      const resp = await callApi("post", "projects", projectData, token);
+      
+      const selectedAssigneeIds = allApprovedUsers
+        .filter((user) => projectData.assignees.includes(user._id))
+        .map((user) => user._id);
+  
+      const resp = await callApi("post", "projects", {
+        ...projectData,
+        assignees: selectedAssigneeIds,
+      }, token);
+  
       alert(resp.message);
-      navigate(`/pm-dashboard/${userId}`);
+      navigate(`/pm-projects/${userId}`);
       if (resp.message === "Project with the same name already exists") {
         alert(resp.message);
       }
@@ -35,6 +80,7 @@ const CreateProject = () => {
       console.error("Error creating project:", error);
     }
   };
+  
 
   return (
     <div>
@@ -69,6 +115,22 @@ const CreateProject = () => {
             <option value="low">Low</option>
           </select>
         </div>
+        <div className="assignees-container">
+          <label>Assign Users:</label>
+          <div className="checkbox-container">
+            {allApprovedUsers.map((user) => (
+              <div key={user._id} className="checkbox-item">
+                <input
+                  type="checkbox"
+                  id={user._id}
+                  checked={projectData.assignees.includes(user._id)}
+                  onChange={() => handleAssigneeChange(user._id)}
+                />
+                <label htmlFor={user._id}>{user.username}</label>
+              </div>
+            ))}
+          </div>
+        </div>
         <div>
           <label>Start Date:</label>
           <input
@@ -95,4 +157,4 @@ const CreateProject = () => {
   );
 };
 
-export default CreateProject;
+export default PmCreateProject;

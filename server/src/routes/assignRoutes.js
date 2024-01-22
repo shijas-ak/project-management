@@ -10,9 +10,9 @@ router.get(
 );
 
 router.put(
-  "/projects/:Id/tasks/:taskId/assign-user",
+  "/assign-users/:projectId/",
   authentication.verifyTokenForAdminAndPM,
-  assignmentController.assignUserToTask
+  assignmentController.assignUserToProject
 );
 
 router.get(
@@ -46,20 +46,16 @@ router.put(
 );
 
 router.get(
-  "/tasks/:taskId/assigned-users",
+  "/projects/:projectId/assigned-users",
   authentication.verifyTokenForAdminAndPM,
-  assignmentController.getAllAssignedUsersForTask
+  assignmentController.getAllAssignedUsersForProject
 );
+
 router.delete(
   "/admin/users/:userId",
   authentication.verifyTokenAndAdmin,
   assignmentController.deleteUserById
 );
 
-router.put(
-  "/projects/:Id/tasks/:taskId/unassign-user",
-  authentication.verifyTokenForAdminAndPM,
-  assignmentController.unassignUsersFromTask
-);
 
 module.exports = router;

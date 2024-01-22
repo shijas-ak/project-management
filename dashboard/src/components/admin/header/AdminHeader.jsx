@@ -70,7 +70,7 @@ export default function PageHeader({ showMobileMenu }) {
           >
             <div className="profile_avatar">
               <img
-                src={`https://project-tracker-737o.onrender.com${userProfile.profile_image}`}
+                src={`http://localhost:3000${userProfile.profile_image}`}
                 alt=""
                 width="42px"
               />
@@ -103,7 +103,7 @@ export default function PageHeader({ showMobileMenu }) {
             <li key={user._id}>
               <div className="profile_pic">
                 <img
-                  src={`https://project-tracker-737o.onrender.com/${user.profile_image}`}
+                  src={`http://localhost:3000${user.profile_image}`}
                   alt=""
                 />
               </div>

@@ -1,4 +1,3 @@
-import {  useNavigate,useParams } from "react-router-dom";
 import "chart.js/auto";
 import AdminDashboardCard from "./AdminDashboardCard";
 import { Bar } from "react-chartjs-2";
@@ -7,8 +6,6 @@ import { callApi } from "../../../services/API";
 import { useEffect, useState } from "react";
 
 export default function AdminDashboard() {
-  const {userId} = useParams()
-  const navigate = useNavigate();
   const [projectStats, setProjectStats] = useState({
     totalProjects: 0,
     finishedProjects: 0,
@@ -48,10 +45,9 @@ export default function AdminDashboard() {
 
         const approvedUsers = await callApi("get", "users/approved", "", token);
         setApprovedUsersCount(approvedUsers.approvedUsers.length);
-        if (approvedUsers.approvedUsers.length === 0 ) {
-          alert("Approved users are not present")
+        if (approvedUsers.approvedUsers.length === 0) {
+          alert("Approved users are not present");
         }
-
       } catch (error) {
         console.error("Error fetching approved users count:", error);
       }
@@ -60,10 +56,6 @@ export default function AdminDashboard() {
     fetchProjectStats();
     fetchApprovedUsersCount();
   }, []);
-
-  const handleCreateProject = () => {
-    navigate(`/admin-create-project/${userId}`);
-  };
 
   const chartData = {
     labels: ["Completed Projects", "Pending Projects"],
@@ -130,18 +122,6 @@ export default function AdminDashboard() {
                   <h4>{approvedUsersCount}</h4>
                   <h5>Developers</h5>
                 </div>
-                <p className={style.req_content}>
-                  Create project to add developers.
-                </p>
-              </div>
-              <div className={style.req_button_block}>
-                <button
-                  type="button"
-                  className="main_button"
-                  onClick={handleCreateProject}
-                >
-                  Create Project
-                </button>
               </div>
             </div>
           </div>
@@ -161,21 +141,60 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {projects.filter((project) => project.status === "InProgress").length > 0 ?
-              projects
-                .filter((project) => project.status === "InProgress")
-                .map((ongoingProject) => (
-                  <tr key={ongoingProject._id}>
-                    <td>{ongoingProject.name}</td>
-                    <td>
-                      <button className={style.yellowButton}>
-                        {ongoingProject.status}
-                      </button>
-                    </td>{" "}
-                  </tr>
-                )): (
-                  <h2>No Ongoing Projects</h2>
-                )}
+              {projects.filter((project) => project.status === "InProgress")
+                .length > 0 ? (
+                projects
+                  .filter((project) => project.status === "InProgress")
+                  .map((ongoingProject) => (
+                    <tr key={ongoingProject._id}>
+                      <td>{ongoingProject.name}</td>
+                      <td>
+                        <button className={style.yellowButton}>
+                          {ongoingProject.status}
+                        </button>
+                      </td>{" "}
+                    </tr>
+                  ))
+              ) : (
+                <h2>No Ongoing Projects</h2>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className={`${style.dash_notification} card_block mt-15`}>
+          <div className="card_top">
+            <div className="section_title">
+              <h2>All Projects</h2>
+            </div>
+            <div className="card_top_right"></div>
+          </div>
+          <table className={style.all_projects_table}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects.filter((project) => project.status !== "InProgress")
+                .length > 0 ? (
+                projects
+                  .filter((project) => project.status !== "InProgress")
+                  .map((project) => (
+                    <tr key={project._id}>
+                      <td>{project.name}</td>
+                      <td>
+                        <button className={style.statusButton}>
+                          {project.status}
+                        </button>
+                      </td>{" "}
+                    </tr>
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan="2">No Projects Available</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

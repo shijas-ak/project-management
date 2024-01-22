@@ -15,6 +15,8 @@ export default function UserDashboard() {
   });
   const [username, setUsername] = useState("");
   const [ongoingTasks, setOngoingTasks] = useState([]);
+  const [userProjects, setUserProjects] = useState([]);
+  const [userTasks, setUserTasks] = useState([]);
 
   useEffect(() => {
     const fetchTaskStats = async () => {
@@ -24,33 +26,80 @@ export default function UserDashboard() {
           return;
         }
         const token = localStorage.getItem("token");
-        const tasks = await callApi("get", `users/${userId}/tasks`, "", token);
-        const totalTasks = tasks.tasks.length;
-        const completedTasks = tasks.tasks.filter(
-          (task) => task.status === "Completed"
-        ).length;
-        const pendingTasks = totalTasks - completedTasks;
-        const ongoingTasks = tasks.tasks.filter(
-          (task) => task.status === "InProgress"
+        const response = await callApi(
+          "get",
+          `projects/user/${userId}`,
+          "",
+          token
         );
-        setTaskStats({
-          totalTasks,
-          completedTasks,
-          pendingTasks,
+        console.log(response);
+    
+        let projects = [];
+    
+        if (Array.isArray(response.projects)) {
+          projects = response.projects;
+        } else if (
+          typeof response.projects === "object" &&
+          response.projects !== null
+        ) {
+          projects = [response.projects];
+        } else {
+          console.error("Unexpected response format for projects");
+        }
+    
+        setUserProjects(projects);
+    
+        const tasksPromises = projects.map(async (project) => {
+          const tasksResponse = await callApi(
+            "get",
+            `projects/${project._id}/${userId}/tasks`,
+            "",
+            token
+          );
+          const tasks = tasksResponse.tasks || [];
+          return {
+            projectId: project._id,
+            tasks,
+          };
         });
-        setOngoingTasks(ongoingTasks);
+    
+        const tasksResults = await Promise.all(tasksPromises);
+        const tasksMap = {};
+        tasksResults.forEach((result) => {
+          tasksMap[result.projectId] = result.tasks;
+        });
+        setUserTasks(tasksMap || {});
       } catch (error) {
         console.error("Error fetching task stats:", error);
       }
       const token = localStorage.getItem("token");
       const response = await callApi("get", "users-profile", "", token);
       const userData = response.user;
-      setUsername({
-        username: userData.username,
-      });
+      setUsername(userData.username);
     };
+    
+
     fetchTaskStats();
-  }, [userId]);
+  }, [userId,userTasks]);
+
+  useEffect(() => {
+    const allTasks = Object.values(userTasks).flat();
+    const totalTasks = allTasks.length;
+    const completedTasks = allTasks.filter(
+      (task) => task.status === "Completed"
+    ).length;
+    const pendingTasks = totalTasks - completedTasks;
+    const ongoingTasks = allTasks.filter(
+      (task) => task.status === "InProgress"
+    );
+
+    setTaskStats({
+      totalTasks,
+      completedTasks,
+      pendingTasks,
+    });
+    setOngoingTasks(ongoingTasks);
+  }, [userTasks]);
 
   const chartData = {
     labels: ["Completed Tasks", "Pending Tasks"],
@@ -72,6 +121,12 @@ export default function UserDashboard() {
         type: "category",
       },
     },
+  };
+
+  const isTaskDue = (endDate) => {
+    const today = new Date();
+    const dueDate = new Date(endDate);
+    return dueDate < today;
   };
 
   return (
@@ -124,15 +179,27 @@ export default function UserDashboard() {
           <table className={style.ongoing_projects_table}>
             <thead>
               <tr>
-                <th>Name</th>
+                <th>Project</th>
+                <th>Task</th>
+                <th>Due Date</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
               {ongoingTasks.length > 0 ? (
                 ongoingTasks.map((ongoingTask) => (
-                  <tr key={ongoingTask._id}>
+                  <tr
+                    key={ongoingTask._id}
+                    style={{
+                      backgroundColor: isTaskDue(ongoingTask.endDate)
+                        ? "#ffcccc"
+                        : "inherit",
+                    }}
+                  >
+                    {" "}
+                    <td>{ongoingTask.projectName}</td>
                     <td>{ongoingTask.title}</td>
+                    <td>{new Date(ongoingTask.endDate).toDateString()}</td>
                     <td>
                       <button className={style.yellowButton}>
                         {ongoingTask.status}
@@ -147,6 +214,59 @@ export default function UserDashboard() {
               )}
             </tbody>
           </table>
+          <div className={style.dash_notification} card_block mt-15>
+            <div className="card_top">
+              <div className="card_top_right"></div>
+            </div>
+            <div className="section_title">
+              <h2>All Tasks</h2>
+            </div>
+            <table className={style.ongoing_projects_table}>
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Task</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.keys(userTasks).map((projectId) =>
+                  userTasks[projectId]
+                    .filter(
+                      (filteredTask) => filteredTask.status !== "InProgress"
+                    )
+                    .map((filteredTask) => (
+                      <tr
+                        key={filteredTask._id}
+                        style={{
+                          backgroundColor: isTaskDue(filteredTask.endDate)
+                            ? "#ffcccc"
+                            : "inherit",
+                        }}
+                      >
+                        <td>{filteredTask.projectName}</td>
+                        <td>{filteredTask.title}</td>
+                        <td>{new Date(filteredTask.endDate).toDateString()}</td>
+                        <td>
+                          <button className={style.yellowButton}>
+                            {filteredTask.status}
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                )}
+
+                {Object.values(userTasks).flat().length === 0 && (
+                  <tr>
+                    <td colSpan="4">
+                      <h3>No tasks present.</h3>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

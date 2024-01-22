@@ -5,48 +5,65 @@ import "./PmProjectsPage.css";
 
 const PmProjectsPage = () => {
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [selectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [filterCriteria, setFilterCriteria] = useState("all");
 
   const navigate = useNavigate();
   const { userId } = useParams();
+
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem("token");
       const projectsData = await callApi("get", "projects", "", token);
       if (projectsData.projects.length === 0) {
         alert(
-          "No projects are present at the moment.Please go back and create a project."
+          "No projects are present at the moment. Please create a project."
         );
-        navigate(`/pm-dashboard/${userId}`);
       }
-      setProjects(projectsData.projects);
+
+      const formattedProjects = projectsData.projects.map((project) => ({
+        ...project,
+        assignees:
+          project.assignees && project.assignees.length > 0
+            ? project.assignees.map((assignee) => assignee.username).join(", ")
+            : "None",
+      }));
+
+      const sortedProjects = formattedProjects.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setProjects(sortedProjects);
+      filterProjects(sortedProjects, filterCriteria);
+
     } catch (error) {
       console.error("Error fetching projects:", error);
+    }
+  };
+  const filterProjects = (projects, criteria) => {
+    switch (criteria) {
+      case "pending":
+        setFilteredProjects(projects.filter((project) => project.status === "Pending"));
+        break;
+      case "completed":
+        setFilteredProjects(projects.filter((project) => project.status === "Completed"));
+        break;
+      case "alphabetical":
+        setFilteredProjects([...projects].sort((a, b) => a.name.localeCompare(b.name)));
+        break;
+      case "dueDate":
+        setFilteredProjects(projects.filter((project) => isProjectDue(project.endDate)));
+        break;
+      default:
+        setFilteredProjects(projects);
+        break;
     }
   };
 
   useEffect(() => {
     fetchProjects();
-  }, []);
-
-  const handleSelectProject = async (projectId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const tasksData = await callApi(
-        "get",
-        `projects/${projectId}/tasks`,
-        "",
-        token
-      );
-      setTasks(tasksData.tasks);
-      setSelectedProject(projectId);
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  };
-
+  }, [filterCriteria]);
   const handleStatusChange = async (projectId, selectedStatus) => {
     try {
       const token = localStorage.getItem("token");
@@ -56,7 +73,7 @@ const PmProjectsPage = () => {
         { status: selectedStatus },
         token
       );
-      alert("project status updated successfully");
+      alert("Project status updated successfully");
       window.location.reload();
     } catch (error) {
       console.error("Error updating project status:", error);
@@ -84,97 +101,109 @@ const PmProjectsPage = () => {
     }
   };
 
+  const handleCreateProject = () => {
+    navigate(`/pm-create-project/${userId}`);
+  };
+  const handleAssignUsers = (projectId) => {
+    navigate(`/pm-assign-users/${userId}/${projectId}`);
+  };
+  const isProjectDue = (endDate) => {
+    const today = new Date();
+    const dueDate = new Date(endDate);
+    return dueDate < today;
+  };
+
   return (
     <div>
       <h2>PROJECTS</h2>
-      <div className="container">
-        <div className="project-list">
-          {projects.length > 0 ? (
-            projects.map((project) => (
-              <div
+      <button className="create-project-button" onClick={handleCreateProject}>
+        Create Project
+      </button>
+      <label>Filter by:</label>
+      <select
+        value={filterCriteria}
+        onChange={(e) => setFilterCriteria(e.target.value)}
+      >
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="alphabetical">Alphabetical Order</option>
+        <option value="dueDate">By Due Date</option>
+      </select>
+
+      <table className="projects-table">
+        <thead>
+          <tr>
+            <th>Project Name</th>
+            <th>Description</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>End Date</th>
+            <th>Assignees</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredProjects.length > 0 ? (
+            filteredProjects.map((project) => (
+              <tr
                 key={project._id}
-                onClick={() => handleSelectProject(project._id)}
+                style={{
+                  backgroundColor: isProjectDue(project.endDate)
+                    ? "#ffcccc"
+                    : "inherit",
+                }}
               >
-                <p>PROJECT NAME: {project.name} </p>
-                <p>PROJECT DESC: {project.description}</p>
-                <p>PROJECT STATUS: {project.status}</p>
-                <p>
-                  PROJECT STARTDATE:
-                  {new Date(project.startDate).toDateString()}
-                </p>
-                <p>
-                  PROJECT ENDDATE: {new Date(project.endDate).toDateString()}
-                </p>
-
+                {" "}
+                <td>{project.name}</td>
+                <td>{project.description}</td>
+                <td>{project.priority}</td>
+                <td>{project.status}</td>
+                <td>{new Date(project.endDate).toDateString()}</td>
+                <td>{project.assignees}</td>
+                <td>
                 <button
-                  onClick={() => handleDeleteProject(project._id)}
-                  className="delete-button"
-                >
-                  Delete Project
-                </button>
-                <button
-                  onClick={() =>
-                    navigate(`/pm-edit-project/${userId}/${project._id}`)
-                  }
-                  className="edit-button"
-                >
-                  Edit Project
-                </button>
-
-                <select
-                  value={selectedStatus}
-                  onChange={(e) =>
-                    handleStatusChange(project._id, e.target.value)
-                  }
-                >
-                  <option value="">Change Project Status</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Pending">Pending</option>
-                  <option value="InProgress">InProgress</option>
-                </select>
-              </div>
+                    onClick={() => handleAssignUsers(project._id)}
+                    className="assign-users-button"
+                  >
+                    Assign Users
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProject(project._id)}
+                    className="delete-button"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(`/pm-edit-project/${userId}/${project._id}`)
+                    }
+                    className="edit-button"
+                  >
+                    Edit
+                  </button>
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) =>
+                      handleStatusChange(project._id, e.target.value)
+                    }
+                  >
+                    <option value="">Change Status</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="InProgress">InProgress</option>
+                  </select>
+                </td>
+              </tr>
             ))
           ) : (
-            <div>No Projects Available</div>
+            <tr>
+              <td colSpan="5">No Projects Available</td>
+            </tr>
           )}
-        </div>
-        <div className="tasks-list">
-          {selectedProject ? (
-            <div>
-              <h3>
-                {" "}
-                {projects.find((p) => p._id === selectedProject.id)?.name}
-              </h3>
-              <h2>LIST OF TASKS</h2>
-              {tasks.length > 0 ? (
-                tasks.map((task) => (
-                  <div key={task._id}>
-                    <p>Title: {task.title}</p>
-                    <p>Description: {task.description}</p>
-                    <p>Start Date: {new Date(task.startDate).toDateString()}</p>
-                    <p>End Date: {new Date(task.endDate).toDateString()}</p>
-                    <p>Status: {task.status}</p>
-                    <p>
-                      Assignees:{" "}
-                      {task.assignees && task.assignees.length > 0
-                        ? task.assignees
-                            .map((assignee) => assignee.username)
-                            .join(", ")
-                        : "None"}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div>No Tasks available for this Project</div>
-              )}
-            </div>
-          ) : (
-            "Select a project!!"
-          )}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 };
-
 export default PmProjectsPage;

@@ -1,5 +1,5 @@
-import {useNavigate ,useParams} from "react-router-dom";
-import 'chart.js/auto';
+import { useNavigate, useParams } from "react-router-dom";
+import "chart.js/auto";
 import PmDashboardCard from "./PmDashboardCard";
 import { Bar } from "react-chartjs-2";
 import style from "./page.module.css";
@@ -7,8 +7,6 @@ import { callApi } from "../../../services/API";
 import { useEffect, useState } from "react";
 
 export default function PmDashboard() {
-  const {userId} = useParams()
-  const navigate = useNavigate();
   const [projectStats, setProjectStats] = useState({
     totalProjects: 0,
     finishedProjects: 0,
@@ -16,6 +14,8 @@ export default function PmDashboard() {
   });
   const [approvedUsersCount, setApprovedUsersCount] = useState(0);
   const [projects, setProjects] = useState([]);
+  const [approvedUsers, setApprovedUsers] = useState([]);
+  const [usersWithTasks, setUsersWithTasks] = useState([]);
 
   useEffect(() => {
     const fetchProjectStats = async () => {
@@ -49,21 +49,41 @@ export default function PmDashboard() {
         const approvedUsers = await callApi("get", "users/approved", "", token);
 
         setApprovedUsersCount(approvedUsers.approvedUsers.length);
-        if (approvedUsers.approvedUsers.length === 0 ) {
-          alert("Approved users are not present")
+        setApprovedUsers(approvedUsers.approvedUsers);
+
+        if (approvedUsers.approvedUsers.length === 0) {
+          alert("Approved users are not present");
         }
       } catch (error) {
         console.error("Error fetching approved users count:", error);
       }
     };
+    const fetchUsersWithTasks = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const userTasksResponse = await callApi(
+          "get",
+          "users-tasks",
+          "",
+          token
+        );
+        console.log(userTasksResponse);
+        const usersTasks = userTasksResponse.usersWithTasks;
 
-    fetchProjectStats();
-    fetchApprovedUsersCount();
+        setUsersWithTasks(usersTasks);
+      } catch (error) {
+        console.error("Error fetching users with tasks:", error);
+      }
+    };
+
+    const fetchData = async () => {
+      await fetchProjectStats();
+      await fetchApprovedUsersCount();
+      await fetchUsersWithTasks();
+    };
+
+    fetchData();
   }, []);
-
-  const handleCreateProject = () => {
-    navigate(`/create-project/${userId}`);
-  };
 
   const chartData = {
     labels: ["Completed Projects", "Pending Projects"],
@@ -81,9 +101,9 @@ export default function PmDashboard() {
       y: {
         beginAtZero: true,
       },
-      x:{
-        type:'category'
-      }
+      x: {
+        type: "category",
+      },
     },
   };
 
@@ -130,20 +150,7 @@ export default function PmDashboard() {
                   <h4>{approvedUsersCount}</h4>
                   <h5>Developers</h5>
                 </div>
-                <p className={style.req_content}>
-                  Create project to add developers.
-                </p>
               </div>
-              <div className={style.req_button_block}>
-                <button
-                  type="button"
-                  className="main_button"
-                  onClick={handleCreateProject}
-                >
-                  Create Project
-                </button>
-              </div>
-             
             </div>
           </div>
         </div>
@@ -162,21 +169,102 @@ export default function PmDashboard() {
               </tr>
             </thead>
             <tbody>
-              {projects.filter((project) => project.status === "InProgress").length > 0 ?
-              projects
-                .filter((project) => project.status === "InProgress")
-                .map((ongoingProject) => (
-                  <tr key={ongoingProject._id}>
-                    <td>{ongoingProject.name}</td>
-                    <td>
-                      <button className={style.yellowButton}>
-                        {ongoingProject.status}
-                      </button>
-                    </td>{" "}
+              {projects.filter((project) => project.status === "InProgress")
+                .length > 0 ? (
+                projects
+                  .filter((project) => project.status === "InProgress")
+                  .map((ongoingProject) => (
+                    <tr key={ongoingProject._id}>
+                      <td>{ongoingProject.name}</td>
+                      <td>
+                        <button className={style.yellowButton}>
+                          {ongoingProject.status}
+                        </button>
+                      </td>{" "}
+                    </tr>
+                  ))
+              ) : (
+                <h2>No Ongoing Projects</h2>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className={`${style.dash_notification} card_block mt-15`}>
+          <div className="card_top">
+            <div className="section_title">
+              <h2>All Projects</h2>
+            </div>
+            <div className="card_top_right"></div>
+          </div>
+          <table className={style.all_projects_table}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects.filter((project) => project.status !== "InProgress")
+                .length > 0 ? (
+                projects
+                  .filter((project) => project.status !== "InProgress")
+                  .map((project) => (
+                    <tr key={project._id}>
+                      <td>{project.name}</td>
+                      <td>
+                        <button className={style.statusButton}>
+                          {project.status}
+                        </button>
+                      </td>{" "}
+                    </tr>
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan="2">No Projects Available</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className={`${style.dash_notification} card_block mt-15`}>
+          <div className="card_top">
+            <div className="section_title">
+              <h2>Users with InProgress Tasks</h2>
+            </div>
+            <div className="card_top_right"></div>
+          </div>
+          <table className={style.all_projects_table}>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Task</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usersWithTasks.map((user) =>
+                user.tasks &&
+                Array.isArray(user.tasks) &&
+                user.tasks.length > 0 ? (
+                  user.tasks.map((task, index) => (
+                    <tr key={index}>
+                      <td>{user.username}</td>
+                      <td>{task.title}</td>
+                      <td>
+                        <button className={style.statusButton}>
+                          {task.status}
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr key={user.userId}>
+                    <td>{user.username}</td>
+                    <td>{user.task.title}</td>
+                    <td>{user.task.status}</td>
                   </tr>
-                )) : (
-                  <h2>No Ongoing Projects</h2>
-                )}
+                )
+              )}
             </tbody>
           </table>
         </div>

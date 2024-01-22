@@ -1,10 +1,9 @@
 import React from "react";
 import { useState} from "react";
 import { callApi } from "../../../services/API";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 
 const CreateTask = () => {
-  const [ setProjects] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -13,16 +12,16 @@ const CreateTask = () => {
     description: "",
     startDate: "",
     endDate: "",
-    assignees: [],
+    status:""
   });
 
-  const { projectId } = useParams();
+  const { projectId,userId } = useParams();
+  const navigate = useNavigate()
 
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem("token");
-      const projectsData = await callApi("get", "projects", "", token);
-      setProjects(projectsData.projects);
+      await callApi("get", "projects", "", token);
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
@@ -31,21 +30,24 @@ const CreateTask = () => {
   const handleAddTask = async () => {
     try {
       const token = localStorage.getItem("token");
-      await callApi(
+     await callApi(
         "post",
         `projects/${projectId}/tasks`,
         { ...taskFormData },
         token
       );
-      alert("Task created successfully. Please return to tasks page and assign users.");
-      window.location.reload()
+      alert("Task created successfully.");
+      navigate(`/pm-tasks/${userId}`)
       setErrorMessage("");
-
       fetchProjects();
     } catch (error) {
       console.error("Error adding task:", error);
-      setErrorMessage("Error adding task. Please try again.");
-      setSuccessMessage("");
+      if (error.response && error.response.message === "Task with the same title already exists") {
+        alert("Error: Task with the same title already exists. Please choose a different title.");
+      } else {
+        setErrorMessage("Error adding task. Please try again.");
+        setSuccessMessage("");
+      }
     }
   };
 

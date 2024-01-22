@@ -3,7 +3,7 @@ import { useState } from "react";
 import { callApi } from "../../../services/API";
 import { useParams, useNavigate } from "react-router-dom";
 
-const AdminCreateTask = () => {
+const UserCreateTask = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -37,7 +37,7 @@ const AdminCreateTask = () => {
         token
       );
       alert("Task created successfully.");
-      navigate(`/admin-tasks/${userId}`)
+      navigate(`/user-tasks/${userId}`)
       setErrorMessage("");
       fetchProjects();
     } catch (error) {
@@ -108,4 +108,4 @@ const AdminCreateTask = () => {
   );
 };
 
-export default AdminCreateTask;
+export default UserCreateTask;

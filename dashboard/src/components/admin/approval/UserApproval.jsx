@@ -14,8 +14,14 @@ function UserApproval() {
         const token = localStorage.getItem("token");
         const response = await callApi("get", "users/registered", "", token);
         setUsers(response.registeredUsers);
-        if (response.registeredUsers === 0) {
+        if (response.registeredUsers.length === 0) {
           alert("No registered users are present");
+        }else {
+          const sortedUsers = response.registeredUsers.sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
+  
+          setUsers(sortedUsers);
         }
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -137,7 +143,7 @@ function UserApproval() {
               <tr key={user._id}>
                 <td>
                   <img
-                    src={`https://project-tracker-737o.onrender.com${user.profile_image}`}
+                    src={`http://localhost:3000${user.profile_image}`}
                     alt="Profile"
                     className="profile-image"
                   />

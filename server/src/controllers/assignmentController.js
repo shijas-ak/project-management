@@ -144,26 +144,18 @@ const assignmentController = {
     }
   },
 
-  getAllAssignedUsersForTask: async (req, res) => {
+  getAllAssignedUsersForProject: async (req, res) => {
     try {
-      const taskId = req.params.taskId;
+      const projectId = req.params.projectId;
 
-      const project = await Project.findOne({ "tasks._id": taskId });
+      const project = await Project.findById(projectId);
 
       if (!project) {
         return res
           .status(404)
-          .json({ message: "Task not found in any project" });
+          .json({ message: "Project not found" });
       }
-
-      const task = project.tasks.find((task) => task._id.toString() === taskId);
-
-      if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-      }
-
-      const assignedUsers = await User.find({ _id: { $in: task.assignees } });
-
+      const assignedUsers = await User.find({ _id: { $in: project.assignees } });
       res.status(200).json({
         assignedUsers,
       });
@@ -171,83 +163,41 @@ const assignmentController = {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
     }
-  },
-  assignUserToTask: async (req, res) => {
-    try {
-      const projectId = req.params.Id;
-      const taskId = req.params.taskId;
-      const { assignees } = req.body;
+},
 
-      const project = await Project.findById(projectId);
+assignUserToProject: async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const { assignees } = req.body;
 
-      if (!project) {
-        return res.status(404).json({ message: "Project not found" });
-      }
+    const project = await Project.findById(projectId);
 
-      const task = project.tasks.id(taskId);
-
-      if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-      }
-      assignees.forEach((userId) => {
-        if (!task.assignees.includes(userId)) {
-          task.assignees.push(userId);
-        } else {
-          console.warn(`User ${userId} is already assigned to the task.`);
-        }
-      });
-      await project.save();
-
-      res.status(200).json({
-        message: "User assigned to task successfully",
-        task,
-        taskId,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
     }
-  },
 
-  unassignUsersFromTask: async (req, res) => {
-    try {
-      const projectId = req.params.Id;
-      const taskId = req.params.taskId;
-      const { assignees } = req.body;
-
-      const project = await Project.findById(projectId);
-
-      if (!project) {
-        return res.status(404).json({ message: "Project not found" });
+    assignees.forEach((userId) => {
+      if (!project.assignees.includes(userId)) {
+        project.assignees.push(userId);
+      } else {
+        console.warn(`User ${userId} is already assigned to the project.`);
       }
+    });
 
-      const task = project.tasks.id(taskId);
+    await project.save();
 
-      if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-      }
+    res.status(200).json({
+      message: "User(s) assigned to project successfully",
+      project: project,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+ 
+},
 
-      assignees.forEach((userId) => {
-        const userIndex = task.assignees.indexOf(userId);
 
-        if (userIndex !== -1) {
-          task.assignees.splice(userIndex, 1);
-        } else {
-          console.warn(`User ${userId} is not assigned to the task.`);
-        }
-      });
-
-      await project.save();
-
-      res.status(200).json({
-        message: "Users unassigned from task successfully",
-        task,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  },
-};
+}
 
 module.exports = assignmentController;

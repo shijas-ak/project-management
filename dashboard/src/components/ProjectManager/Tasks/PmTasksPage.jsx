@@ -6,11 +6,10 @@ import "./PmTasksPage.css";
 
 const PmTasksPage = () => {
   const [projects, setProjects] = useState([]);
-  const [approvedUsers, setApprovedUsers] = useState([]);
-  const [assignedUsers, setAssignedUsers] = useState([]);
-  const [selectedAssignees, setSelectedAssignees] = useState({});
-  const [selectedUnassignees, setSelectedUnassignees] = useState({});
-
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [filterCriteria, setFilterCriteria] = useState("");
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [projectFilterCriteria, setProjectFilterCriteria] = useState({});
   const navigate = useNavigate();
   const { userId } = useParams();
 
@@ -18,50 +17,75 @@ const PmTasksPage = () => {
     const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("token");
-        const projectsData = await callApi("get", "projects", "", token);
-        if (projectsData.projects.length === 0) {
-          alert(
-            "No tasks are present at the moment.Please create a project to add tasks"
-          );
-          navigate(`/pm-dashboard/${userId}`);
+        const res = await callApi("get", "projects", "", token);
+        if (res.projects.length === 0) {
+          alert("No Projects are present");
         }
-        setProjects(projectsData.projects);
+        setProjects(res.projects);
+
+        const initialFilterCriteria = {};
+        res.projects.forEach((project) => {
+          initialFilterCriteria[project._id] = "all";
+        });
+        setProjectFilterCriteria(initialFilterCriteria);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
     };
 
-    const fetchApprovedUsers = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const approvedUsersData = await callApi(
-          "get",
-          "users/approved",
-          "",
-          token
-        );
-
-        setApprovedUsers(approvedUsersData.approvedUsers);
-      } catch (error) {
-        console.error("Error fetching approved users:", error);
-      }
-    };
-
     fetchProjects();
-    fetchApprovedUsers();
-  }, []);
+  }, [navigate, userId]);
 
-  const TaskCreationPage = (projectId, userId) => {
-    navigate(`/pm-create-task/${projectId}`);
+  useEffect(() => {
+    filterTasks(selectedProjectId);
+  }, [projectFilterCriteria, selectedProjectId, filterCriteria]);
+
+  const filterTasks = (projectId) => {
+    if (!projectId) {
+      setFilteredTasks([]);
+      return;
+    }
+
+    const project = projects.find((project) => project._id === projectId);
+
+    if (!project) {
+      setFilteredTasks([]);
+      return;
+    }
+
+    const updatedFilteredTasks = project.tasks.filter((task) => {
+      switch (projectFilterCriteria[projectId]) {
+        case "pending":
+          return task.status === "Pending";
+        case "completed":
+          return task.status === "Completed";
+        case "alphabetical":
+          return true;
+        case "dueDate":
+          return isTaskDue(task.endDate);
+        default:
+          return true;
+      }
+    });
+    if (projectFilterCriteria[projectId] === "alphabetical") {
+      updatedFilteredTasks.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    setFilteredTasks(updatedFilteredTasks);
   };
 
-  const handleDeleteTask = async (projectId, taskId) => {
+  const TaskCreationPage = (projectId) => {
+    setSelectedProjectId(projectId);
+    navigate(`/pm-create-task/${projectId}/${userId}`);
+  };
+
+  const handleDeleteTask = async (taskId) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       try {
         const token = localStorage.getItem("token");
         const res = await callApi(
           "delete",
-          `projects/${projectId}/tasks/${taskId}`,
+          `projects/${selectedProjectId}/tasks/${taskId}`,
           "",
           token
         );
@@ -73,181 +97,110 @@ const PmTasksPage = () => {
     }
   };
 
-  const handleAssignUsers = async (projectId, taskId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const selectedUsers = selectedAssignees[taskId];
-
-      if (!selectedUsers || selectedUsers.length === 0) {
-        alert("Please select users to assign.");
-        return;
-      }
-      const userIds = (selectedAssignees[taskId] || []).map(
-        (user) => user.value
-      );
-
-      const res = await callApi(
-        "put",
-        `projects/${projectId}/tasks/${taskId}/assign-user`,
-
-        { assignees: userIds },
-        token
-      );
-      alert(res.message);
-      if (res.message === "User is already assigned to the task.") {
-        alert("User is already assigned to the task.");
-      }
-
-      const assignedUsersData = await callApi(
-        "get",
-        `tasks/${taskId}/assigned-users`,
-        "",
-        token
-      );
-      setAssignedUsers(assignedUsersData.assignedUsers);
-    } catch (error) {
-      console.error("Error assigning users to the task:", error.message);
-    }
+  const handleEditTask = (taskId) => {
+    navigate(`/pm-edit-task/${userId}/${selectedProjectId}/${taskId}`);
   };
 
-  const handleUnassignUsers = async (projectId, taskId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const selectedUsers = selectedUnassignees[taskId];
-
-      if (!selectedUsers || selectedUsers.length === 0) {
-        alert("Please select users to unassign.");
-        return;
-      }
-      const userIds = selectedUsers.map((user) => user.value);
-      const res = await callApi(
-        "put",
-        `projects/${projectId}/tasks/${taskId}/unassign-user`,
-        { assignees: userIds },
-        token
-      );
-      alert(res.message);
-      window.location.reload();
-
-      const assignedUsersData = await callApi(
-        "get",
-        `tasks/${taskId}/assigned-users`,
-        "",
-        token
-      );
-
-      setAssignedUsers((prevAssignedUsers) => {
-        const updatedAssignedUsers = { ...prevAssignedUsers };
-        updatedAssignedUsers[taskId] = assignedUsersData.assignedUsers || [];
-        return updatedAssignedUsers;
-      });
-    } catch (error) {
-      console.error("Error unassigning users from the task:", error);
-    }
-  };
-
-  const handleAssigneesChange = (taskId, values) => {
-    setSelectedAssignees((prevAssignees) => ({
-      ...prevAssignees,
-      [taskId]: values || [],
-    }));
-  };
-  const handleUnassigneesChange = (taskId, values) => {
-    setSelectedUnassignees((prevAssignees) => ({
-      ...prevAssignees,
-      [taskId]: values || [],
-    }));
-  };
-  const handleEditTask = (projectId, taskId) => {
-    navigate(`/pm-edit-task/${userId}/${projectId}/${taskId}`);
+  const isTaskDue = (endDate) => {
+    const today = new Date();
+    const dueDate = new Date(endDate);
+    return dueDate < today;
   };
 
   return (
     <div>
       <h2>TASKS</h2>
-      {projects.length > 0 ? (
-        projects.map((project) => (
-          <div key={project._id}>
-            <p>Project: {project.name}</p>
-            <p>Status: {project.status}</p>
+      <div>
+        <label>Select Project:</label>
+        <select
+          value={selectedProjectId}
+          onChange={(e) => {
+            setSelectedProjectId(e.target.value);
+            filterTasks(e.target.value);
+          }}
+        >
+          <option value="" disabled>
+            Select a Project
+          </option>
+          {projects.length > 0 ? (
+            projects.map((project) => (
+              <option key={project._id} value={project._id}>
+                {project.name}
+              </option>
+            ))
+          ) : (
+            <p>no projects available</p>
+          )}
+        </select>
+      </div>
 
-            <button onClick={() => TaskCreationPage(project._id)}>
-              Add Task
-            </button>
-            <hr />
-            {project.tasks.length > 0 ? (
-              project.tasks.map((task) => (
-                <div key={task._id}>
-                  <p>Task Title: {task.title}</p>
-                  <p>Task Description: {task.description}</p>
-                  <p>Task Status: {task.status}</p>
-                  <p>Start Date: {new Date(task.startDate).toDateString()}</p>
-                  <p>End Date: {new Date(task.endDate).toDateString()}</p>
-                  <p>
-                    Task Assignees:{" "}
-                    {task.assignees.length > 0
-                      ? task.assignees
-                          .map((assignee) => assignee.username)
-                          .join(", ")
-                      : "None"}
-                  </p>
-                  <Select
-                    options={approvedUsers.map((user) => ({
-                      value: user._id,
-                      label: user.username,
-                    }))}
-                    value={selectedAssignees[task._id] || []}
-                    isMulti
-                    onChange={(values) =>
-                      handleAssigneesChange(task._id, values)
-                    }
-                    placeholder="Select Users to Assign"
-                  />
-
-                  <button
-                    onClick={() => handleAssignUsers(project._id, task._id)}
-                  >
-                    Assign
-                  </button>
-                  <Select
-                    options={(Array.isArray(assignedUsers)
-                      ? assignedUsers
-                      : []
-                    ).map((user) => ({
-                      value: user._id,
-                      label: user.username,
-                    }))}
-                    value={selectedUnassignees[task._id] || []}
-                    isMulti
-                    onChange={(values) =>
-                      handleUnassigneesChange(task._id, values)
-                    }
-                    placeholder="Select Users to Unassign"
-                  />
-                  <button
-                    onClick={() => handleUnassignUsers(project._id, task._id)}
-                  >
-                    Unassign
-                  </button>
-                  <button onClick={() => handleEditTask(project._id, task._id)}>
-                    Edit Task
-                  </button>
-                  <button
-                    onClick={() => handleDeleteTask(project._id, task._id)}
-                  >
-                    Delete Task
-                  </button>
-
-                  <hr />
-                </div>
-              ))
-            ) : (
-              <h4>Please Create tasks</h4>
-            )}
-          </div>
-        ))
-      ) : (
-        <div>No Projects Available</div>
+      {selectedProjectId && (
+        <div>
+          <button onClick={() => TaskCreationPage(selectedProjectId)}>
+            Add Task
+          </button>
+          <label>Filter by:</label>
+          <select
+            value={projectFilterCriteria[selectedProjectId]}
+            onChange={(e) => {
+              const updatedFilterCriteria = {
+                ...projectFilterCriteria,
+                [selectedProjectId]: e.target.value,
+              };
+              setProjectFilterCriteria(updatedFilterCriteria);
+              filterTasks(selectedProjectId);
+            }}
+          >
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="alphabetical">Alphabetical Order</option>
+            <option value="dueDate">By Due Date</option>
+          </select>
+          <hr />
+          {filteredTasks.length > 0 ? (
+            <table className="tasks-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>End Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTasks
+                  .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+                  .map((task) => (
+                    <tr
+                      key={task._id}
+                      style={{
+                        backgroundColor: isTaskDue(task.endDate)
+                          ? "#ffcccc"
+                          : "inherit",
+                      }}
+                    >
+                      <td>{task.title}</td>
+                      <td>{task.description}</td>
+                      <td>{new Date(task.endDate).toDateString()}</td>
+                      <td>{task.status}</td>
+                      <td>
+                        <button onClick={() => handleEditTask(task._id)}>
+                          Edit
+                        </button>
+                        <button onClick={() => handleDeleteTask(task._id)}>
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          ) : (
+            <h4>No tasks present for the selected project !!!</h4>
+          )}
+        </div>
       )}
     </div>
   );
