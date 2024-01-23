@@ -68,6 +68,7 @@ export default function PmDashboard() {
           token
         );
         const usersTasks = userTasksResponse.usersWithTasks;
+        console.log(usersTasks);
 
         setUsersWithTasks(usersTasks);
       } catch (error) {
@@ -235,7 +236,8 @@ export default function PmDashboard() {
           <table className={style.all_projects_table}>
             <thead>
               <tr>
-                <th>Task By</th>
+              <th>Project Name</th>
+                <th>Task by</th>
                 <th>Task Title</th>
                 <th>Status</th>
               </tr>
@@ -247,6 +249,7 @@ export default function PmDashboard() {
                 user.tasks.length > 0 ? (
                   user.tasks.map((task, index) => (
                     <tr key={index}>
+                      <td>{user.projectName}</td>
                       <td>{task.title}</td>
                       <td>{user.username}</td>
                       <td>
@@ -258,6 +261,7 @@ export default function PmDashboard() {
                   ))
                 ) : (
                   <tr key={user.userId}>
+                    <td>{user.projectName}</td>
                     <td>{user.username}</td>
                     <td>{user.task.title}</td>
                     <td>{user.task.status}</td>

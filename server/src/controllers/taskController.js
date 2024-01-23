@@ -151,6 +151,7 @@ const taskController = {
               _id: 0,
               userId: '$tasks.createdBy',
               username: user.username,
+              projectName: '$name',
               task: '$tasks',
             },
           },
