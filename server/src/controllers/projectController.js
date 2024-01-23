@@ -4,12 +4,19 @@ const Project = require("../models/project");
 const projectController = {
   getAllProjects: async (req, res) => {
     try {
-      const projects = await Project.find().populate({
-        path: "assignees",
-        model: "User",
-        select: "username",
-      });
-      res.status(200).json({projects});
+      const projects = await Project.find().populate([
+        {
+          path: "assignees",
+          model: "User",
+          select: "username",
+        },
+        {
+          path: "tasks.createdBy",
+          model: "User",
+          select: "username",
+        },
+      ]);
+      res.status(200).json({ projects });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
@@ -21,7 +28,7 @@ const projectController = {
       const userId = req.params.userId;
 
       const projects = await Project.find({
-        assignees : new mongoose.Types.ObjectId(userId),
+        assignees: new mongoose.Types.ObjectId(userId),
       }).populate({
         path: "assignees",
         model: "User",
@@ -45,10 +52,10 @@ const projectController = {
     try {
       const projectId = req.params.Id;
       const project = await Project.findById(projectId).populate({
-        path:"assignees",
-        model:"User",
-        select:"username"
-      })
+        path: "assignees",
+        model: "User",
+        select: "username",
+      });
 
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
@@ -82,12 +89,11 @@ const projectController = {
       });
 
       await newProject.save();
-      await newProject
-      .populate({
-        path: 'assignees',
+      await newProject.populate({
+        path: "assignees",
         model: "User",
-        select: 'username',
-      })
+        select: "username",
+      });
       res.status(201).json({
         message: "Project created successfully",
         project: newProject,
@@ -101,9 +107,17 @@ const projectController = {
   updateProject: async (req, res) => {
     try {
       const projectId = req.params.Id;
-      const { name, description, startDate, endDate, priority, tasks, status, assignees } =
-        req.body;
-        
+      const {
+        name,
+        description,
+        startDate,
+        endDate,
+        priority,
+        tasks,
+        status,
+        assignees,
+      } = req.body;
+
       const existingProject = await Project.findOne({
         name,
         _id: { $ne: projectId },
@@ -118,7 +132,16 @@ const projectController = {
 
       const updatedProject = await Project.findByIdAndUpdate(
         projectId,
-        { name, description, startDate, endDate, priority, tasks, status, assignees },
+        {
+          name,
+          description,
+          startDate,
+          endDate,
+          priority,
+          tasks,
+          status,
+          assignees,
+        },
         { new: true }
       );
 

@@ -67,7 +67,6 @@ export default function PmDashboard() {
           "",
           token
         );
-        console.log(userTasksResponse);
         const usersTasks = userTasksResponse.usersWithTasks;
 
         setUsersWithTasks(usersTasks);
@@ -229,15 +228,15 @@ export default function PmDashboard() {
         <div className={`${style.dash_notification} card_block mt-15`}>
           <div className="card_top">
             <div className="section_title">
-              <h2>Users with InProgress Tasks</h2>
+              <h2>Users and Tasks</h2>
             </div>
             <div className="card_top_right"></div>
           </div>
           <table className={style.all_projects_table}>
             <thead>
               <tr>
-                <th>Username</th>
-                <th>Task</th>
+                <th>Task By</th>
+                <th>Task Title</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -248,8 +247,8 @@ export default function PmDashboard() {
                 user.tasks.length > 0 ? (
                   user.tasks.map((task, index) => (
                     <tr key={index}>
-                      <td>{user.username}</td>
                       <td>{task.title}</td>
+                      <td>{user.username}</td>
                       <td>
                         <button className={style.statusButton}>
                           {task.status}

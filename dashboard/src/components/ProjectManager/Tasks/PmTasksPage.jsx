@@ -9,6 +9,7 @@ const PmTasksPage = () => {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [filterCriteria, setFilterCriteria] = useState("");
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [usernameFilter, setUsernameFilter] = useState("");
   const [projectFilterCriteria, setProjectFilterCriteria] = useState({});
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -18,6 +19,7 @@ const PmTasksPage = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await callApi("get", "projects", "", token);
+        console.log("haha", res);
         if (res.projects.length === 0) {
           alert("No Projects are present");
         }
@@ -54,19 +56,34 @@ const PmTasksPage = () => {
     }
 
     const updatedFilteredTasks = project.tasks.filter((task) => {
+      let passesProjectFilter = true;
       switch (projectFilterCriteria[projectId]) {
         case "pending":
-          return task.status === "Pending";
+          passesProjectFilter = task.status === "Pending";
+          break;
         case "completed":
-          return task.status === "Completed";
+          passesProjectFilter = task.status === "Completed";
+          break;
         case "alphabetical":
-          return true;
+          passesProjectFilter = true;
+          break;
         case "dueDate":
-          return isTaskDue(task.endDate);
+          passesProjectFilter = isTaskDue(task.endDate);
+          break;
         default:
-          return true;
+          passesProjectFilter = true;
       }
+
+      const passesUsernameFilter =
+        !usernameFilter ||
+        (task.createdBy &&
+          task.createdBy.username
+            .toLowerCase()
+            .includes(usernameFilter.toLowerCase()));
+
+      return passesProjectFilter && passesUsernameFilter;
     });
+
     if (projectFilterCriteria[projectId] === "alphabetical") {
       updatedFilteredTasks.sort((a, b) => a.title.localeCompare(b.title));
     }
@@ -158,11 +175,22 @@ const PmTasksPage = () => {
             <option value="dueDate">By Due Date</option>
           </select>
           <hr />
+          
+        <label>Filter by Username:</label>
+        <input
+          type="text"
+          placeholder="Enter username"
+          value={usernameFilter}
+          onChange={(e) => setUsernameFilter(e.target.value)}
+        />
+      
+
           {filteredTasks.length > 0 ? (
             <table className="tasks-table">
               <thead>
                 <tr>
                   <th>Title</th>
+                  <th>Created by</th>
                   <th>Description</th>
                   <th>End Date</th>
                   <th>Status</th>
@@ -182,6 +210,9 @@ const PmTasksPage = () => {
                       }}
                     >
                       <td>{task.title}</td>
+                      <td>
+                        {task.createdBy ? task.createdBy.username : "N/A"}
+                      </td>
                       <td>{task.description}</td>
                       <td>{new Date(task.endDate).toDateString()}</td>
                       <td>{task.status}</td>
